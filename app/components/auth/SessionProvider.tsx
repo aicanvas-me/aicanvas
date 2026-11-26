@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { createClient } from '../../lib/supabase/client'
+import { supabaseConfigured } from '../../lib/supabase/configured'
 import type { AiPlatform, PackageManager } from '../../lib/supabase/types'
 
 type Preferences = {
@@ -131,6 +132,10 @@ export function SessionProvider({
   }, [refreshSaved])
 
   useEffect(() => {
+    // Without the keys there is no session to watch, and createClient() throws:
+    // a clone with no env renders the catalog signed out instead of blanking the
+    // document through the root error boundary on hydration.
+    if (!supabaseConfigured()) return
     const supabase = createClient()
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       const next = session?.user ?? null

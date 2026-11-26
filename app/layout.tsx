@@ -162,7 +162,7 @@ export default async function RootLayout({
     )
   }
 
-  const user = supabaseConfigured
+  const user = supabaseConfigured()
     ? (await (await createClient()).auth.getUser()).data.user
     : null
 

@@ -34,7 +34,7 @@ const TILES = [
   'voice-chat-pill', 'glass-tags', 'radial-toolbar', 'glass-card', 'dot-grid', 'glass-toggle', 'runway-loader',
   'glass-tab-bar', 'glass-progress', 'emoji-burst', 'scramble-text', 'magnetic-dots', 'sphere-lines', 'glitch-button',
   'text-blur-reveal', 'noise-field', 'particle-constellation', 'wave-lines', 'grid-lines', 'bubble-field',
-  'floating-cards', 'avatar-picker', 'distortion-grid',
+  'floating-cards', 'distortion-grid',
 ]
 
 const SHOTS = [
@@ -94,14 +94,14 @@ const page = (s, font) => `<!doctype html><meta charset="utf-8"><style>
   <div class="center">
     <div class="pills">
       <span class="pill">${check('#1B1B1C')}Open source</span>
-      <span class="pill">${check('#1B1B1C')}MIT licensed</span>
+      <span class="pill">${check('#1B1B1C')}MIT components</span>
     </div>
     <h1>AI agents finally design<br><span>badass interfaces</span></h1>
     <p>Design systems, components and icons, installed as real source with one command.</p>
     <div class="pills">
       <span class="pill ghost">shadcn registry</span>
       <span class="pill ghost">MCP server</span>
-      <span class="pill ghost">One remix prompt each</span>
+      <span class="pill ghost">A prompt per component</span>
     </div>
     <div class="mark">${MARK}<b>AI Canvas</b></div>
   </div>
@@ -120,13 +120,32 @@ const want = process.argv[2]
 const font = (await readFile(join(ROOT, 'app/_fonts/manrope/latin.woff2'))).toString('base64')
 await mkdir(OUT, { recursive: true })
 
-const browser = await chromium.launch()
-for (const s of SHOTS.filter((x) => !want || x.file.includes(want))) {
-  const ctx = await browser.newContext({ viewport: { width: s.width, height: s.height }, deviceScaleFactor: SCALE })
-  const p = await ctx.newPage()
-  await p.setContent(page(s, font), { waitUntil: 'networkidle' })
-  await p.screenshot({ path: join(OUT, `${s.file}.jpg`), type: 'jpeg', quality: 86 })
-  await ctx.close()
-  console.log(`readme-banner: assets/${s.file}.jpg (${s.width}x${s.height} at ${SCALE}x)`)
+const shots = SHOTS.filter((x) => !want || x.file.includes(want))
+if (!shots.length) {
+  console.error(`readme-banner: no shot matches "${want}". Names: ${SHOTS.map((s) => s.file).join(', ')}`)
+  process.exit(1)
 }
-await browser.close()
+
+const browser = await chromium.launch()
+try {
+  for (const s of shots) {
+    const ctx = await browser.newContext({ viewport: { width: s.width, height: s.height }, deviceScaleFactor: SCALE })
+    const p = await ctx.newPage()
+    // networkidle resolves on a 404 too, and a missing tile is a blank card in a
+    // committed JPEG. Collect the failures and refuse to write instead.
+    const bad = []
+    p.on('response', (r) => { if (r.status() >= 400) bad.push(`${r.status()} ${r.url()}`) })
+    p.on('requestfailed', (r) => bad.push(`failed ${r.url()}`))
+    await p.setContent(page(s, font), { waitUntil: 'networkidle' })
+    const blank = await p.$$eval('.card img', (els) => els.filter((e) => !e.naturalWidth).length)
+    if (bad.length || blank) {
+      console.error(`readme-banner: ${blank} tile(s) did not render${bad.length ? ':\n  ' + bad.join('\n  ') : ''}`)
+      process.exit(1)
+    }
+    await p.screenshot({ path: join(OUT, `${s.file}.jpg`), type: 'jpeg', quality: 86 })
+    await ctx.close()
+    console.log(`readme-banner: assets/${s.file}.jpg (${s.width}x${s.height} at ${SCALE}x, ${TILES.length} tiles)`)
+  }
+} finally {
+  await browser.close()
+}

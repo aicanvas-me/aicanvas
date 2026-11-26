@@ -25,7 +25,8 @@ where someone is representing the project.
 
 Report through the repository's
 [Security tab](https://github.com/aicanvas-me/aicanvas/security/advisories/new),
-which is private, or by replying to the maintainer on the thread if it is a
-public matter. Reports are read by the maintainer only. The response is one of:
+which is private, through the contact form at
+[aicanvas.me/contact](https://aicanvas.me/contact), or on the thread itself if it
+is a public matter. Reports are read by the maintainer only. The response is one of:
 a note, a removed comment, or a block. Serious or repeated behaviour skips
 straight to a block.

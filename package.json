@@ -2,9 +2,6 @@
   "name": "aicanvas",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=22"
-  },
   "license": "MIT",
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",

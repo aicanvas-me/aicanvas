@@ -6,6 +6,9 @@ contact_links:
   - name: Documentation
     url: https://aicanvas.me/docs
     about: Installation, the shadcn registry, the MCP server, licensing.
+  - name: Ask a question
+    url: https://aicanvas.me/faq
+    about: The FAQ first, then aicanvas.me/contact. A question is fine as a blank issue too.
   - name: Security issue
     url: https://github.com/aicanvas-me/aicanvas/security/advisories/new
     about: Report privately. Never in a public issue.

@@ -19,7 +19,3 @@ updates:
       development:
         dependency-type: development
         update-types: [minor, patch]
-    ignore:
-      # Majors land with the framework upgrade they belong to, never on their own.
-      - dependency-name: "*"
-        update-types: [version-update:semver-major]

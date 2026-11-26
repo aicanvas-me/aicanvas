@@ -6,7 +6,7 @@ export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   // No keys, no session to refresh: a fresh clone browses signed out.
-  if (!supabaseConfigured) return supabaseResponse
+  if (!supabaseConfigured()) return supabaseResponse
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

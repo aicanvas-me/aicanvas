@@ -2,19 +2,21 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
-// Three suites read trees that arrive from the private vault at build time:
-// the Andromeda Pro matrix, the hosted-MCP route (it asserts on a premium slug)
-// and the icon download route (it asserts on the built icon set). A clone without
-// the vault has none of that, so they are excluded there instead of failing a
-// contributor's `npm test` for something they cannot have. With the vault
-// present nothing is skipped.
+// Some suites read trees that arrive from the private vault at build time: the
+// Andromeda Pro matrix and tone rules, and the icon download route. A clone has
+// none of that, so they are excluded there instead of failing a contributor's
+// `npm test` for content they cannot have. With the vault present nothing is
+// excluded, and the warning below is what keeps a skipped premium suite from
+// passing for a full run before a ship. The hosted-MCP route is NOT excluded:
+// its door cases need no vault and it skips only its premium cases itself.
 const dir = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 const premiumInjected = existsSync(dir('./design-systems/andromeda-pro/components'))
 const iconsBuilt = existsSync(dir('./.icons-source'))
 const vaultOnly = [
-  ...(premiumInjected ? [] : ['app/_lib/andromeda-pro/**', 'app/api/mcp/route.test.ts']),
+  ...(premiumInjected ? [] : ['app/_lib/andromeda-pro/**']),
   ...(iconsBuilt ? [] : ['app/api/icons/**']),
 ]
+if (vaultOnly.length) console.warn(`vitest: no vault on disk, not running ${vaultOnly.join(', ')}`)
 
 export default defineConfig({
   resolve: {

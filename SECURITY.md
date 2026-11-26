@@ -10,8 +10,12 @@ Please do not open a public issue, a pull request or a discussion for a
 vulnerability.
 
 What helps: the affected route, file or component, what an attacker can do with
-it, and a reproduction. First response within 72 hours, and a fix or a plan
-before any public disclosure.
+it, and a reproduction. This is a one-person project, so expect a first reply
+within a few days, then a fix or a plan before any public disclosure. There is
+no bug bounty.
+
+Report in good faith, stay inside the scope below, stop as soon as you can
+demonstrate the issue, and no action will be taken against you for it.
 
 ## Scope
 

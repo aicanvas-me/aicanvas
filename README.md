@@ -7,19 +7,16 @@
 <h1 align="center">AI Canvas</h1>
 
 <p align="center">
-  <em>AI agents finally design badass interfaces.</em>
-</p>
-
-<p align="center">
+  <strong>Finished components, not headless primitives.</strong><br />
   Complete React design systems for Claude, Codex, Cursor or any AI agent, plus
-  <strong>78 free MIT components and blocks</strong> that fit any of them.
-  Installed as real source code in your project, never as a dependency.
+  <strong>78 free MIT components and blocks</strong> that fit any of them,
+  installed as real source code in your project, never as a dependency.
 </p>
 
 <p align="center">
   <a href="https://github.com/birobirobiro/awesome-shadcn-ui"><img src="https://awesome.re/mentioned-badge-flat.svg" alt="Mentioned in Awesome shadcn/ui" /></a>
   <a href="https://github.com/aicanvas-me/aicanvas/stargazers"><img src="https://img.shields.io/github/stars/aicanvas-me/aicanvas?style=flat-square&label=stars&labelColor=0E0E0F&color=2D2D2E" alt="GitHub stars" /></a>
-  <a href="https://www.npmjs.com/package/@aicanvas/mcp"><img src="https://img.shields.io/npm/dm/%40aicanvas%2Fmcp?style=flat-square&label=mcp%20installs&labelColor=0E0E0F&color=2D2D2E" alt="MCP server installs per month" /></a>
+  <a href="https://www.npmjs.com/package/@aicanvas/mcp"><img src="https://img.shields.io/npm/dm/%40aicanvas%2Fmcp?style=flat-square&label=mcp%20downloads&labelColor=0E0E0F&color=2D2D2E" alt="MCP server downloads per month" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-2D2D2E?style=flat-square&labelColor=0E0E0F" alt="License: MIT" /></a>
 </p>
 
@@ -46,18 +43,18 @@ npx shadcn@latest add @aicanvas/task-cards
 
 Starting a new project? `npx shadcn@latest init` first, then add.
 
+**Signed out, that command writes a placeholder file instead of the component.**
+The CLI install is tied to a free AI Canvas account, and the setup below takes a
+minute. Reading and copying the code needs no account at all: every component
+page shows its full source, and every free component is in this repo under
+[`components-workspace/`](./components-workspace).
+
 <details>
-<summary><strong>Registry setup and the free account</strong></summary>
+<summary><strong>Set up the registry once</strong></summary>
 
 <br />
 
-Reading and copying the code needs no account: every component page on the site
-shows its full source, and most of the free library is in this repo under
-[`components-workspace/`](./components-workspace).
-
-The one-command CLI install is tied to a free AI Canvas account. Signed out, the
-registry hands the CLI a placeholder file instead of the component, so
-authenticate once first:
+Authenticate first and the install works from then on:
 
 1. [Sign up free](https://aicanvas.me/account/sign-up), then copy your token from
    [account settings](https://aicanvas.me/account/settings).
@@ -70,7 +67,8 @@ authenticate once first:
 
 Every `npx shadcn@latest add @aicanvas/<slug>` is authenticated after that, and
 every component page shows a ready tokenized command while you are signed in.
-`pnpm dlx`, `yarn dlx` and `bunx` work the same way.
+`pnpm dlx`, `yarn dlx` and `bunx` work the same way. The same account covers the
+free design system and its templates.
 
 Full details: [Installation](https://aicanvas.me/docs/installation) and
 [components.json](https://aicanvas.me/docs/components-json).
@@ -90,13 +88,18 @@ is the default target, not a requirement.
 | **Standalone components and blocks** | 78, MIT, in this repo | 20 |
 | **Design systems** | Andromeda Legacy: 39 components, 4 templates, MIT, in this repo | Andromeda Pro: 69 components, 9 templates |
 | **Icons** | Line style, 820 icons, free with a credit line | Duotone, Solid, Solid duotone |
-| **Remix prompts** | One per free component | Behind the Premium gate |
+| **Remix prompts** | One per free component | The setup is public, the rest needs Premium |
 
 The icons are the one free thing that is not MIT and not in this repo: they are
-drawn in a private source and served through the registry, free to install with a
-one-line credit in your code.
+drawn in a private source and served through the registry. Free to install, with
+two conditions: keep the AI Canvas notice at the top of each icon file, and name
+AI Canvas in your credits or licence file when you publish your source. Full
+terms: [Licensing](https://aicanvas.me/docs/licensing) and the
+[Premium License](https://aicanvas.me/premium-license).
+[Pricing](https://aicanvas.me/pricing) covers what Premium costs.
 
-Premium pays for the free library, and the free library stays free: MIT means you
+[Premium](https://aicanvas.me/pricing) pays for the free library, and the free
+library stays free: MIT means you
 can use it in commercial work, change it and ship it, with no credit in your app
 and no permission to ask. The MIT notice travels with the code, as MIT requires.
 The Premium lane is a separate, closed-source catalog, not a crippled free tier.
@@ -105,7 +108,8 @@ The Premium lane is a separate, closed-source catalog, not a crippled free tier.
 
 Every row links to the live catalog, where each component has a running preview,
 its full source and its remix prompt. A component can sit in two categories, so
-the column does not add up to 78.
+the column does not add up to 78, and each page also lists that category's
+Premium items, which the column does not count.
 
 | Category | Free | What's in it |
 | --- | --- | --- |
@@ -140,6 +144,8 @@ an agent can build a whole screen instead of pasting one card.
 ```bash
 npx shadcn@latest add @aicanvas/andromeda          # the free system, 39 components
 ```
+
+Same free account as a single component, and the same placeholder when signed out.
 
 **Andromeda Legacy** is MIT and lives in
 [`design-systems/andromeda/`](./design-systems/andromeda): tokens, components,
@@ -224,15 +230,15 @@ npm run dev
 ```
 
 http://localhost:3001 serves the whole free catalog with no API keys.
-[CONTRIBUTING.md](./CONTRIBUTING.md) covers what each key unlocks, the checks CI
-runs, and how to add a component.
+[CONTRIBUTING.md](./CONTRIBUTING.md) covers what the optional keys unlock, the
+checks CI runs, and how to add a component.
 
 ## Common questions
 
 **Do I need an account?**
 Not to read or copy the code. Every component page shows its full source, and
-most of the free library is in this repo. A free account is only needed for the
-one-command `npx shadcn add` install.
+every free component and the free design system are in this repo. A free account
+is only needed for the one-command `npx shadcn add` install.
 
 **Does it work outside Next.js?**
 Yes. Components are plain React and TypeScript with Tailwind and Framer Motion.

@@ -43,7 +43,7 @@ here. A clone builds the free library only, and that is the supported path.
 | Path | What's there |
 | --- | --- |
 | `components-workspace/<slug>/` | One free component: `index.tsx`, `prompts.ts`, often a `spec.md` |
-| `design-systems/andromeda/` | The free Andromeda design system: tokens, components, utilities |
+| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, templates |
 | `app/` | The aicanvas.me website (Next.js App Router) |
 | `app/lib/component-registry.tsx` | The catalog index. Append-only: slugs are a public contract |
 | `scripts/generate-registry.mjs` | Builds the shadcn registry JSON from the sources above |
@@ -69,21 +69,26 @@ here. A clone builds the free library only, and that is the supported path.
 ## Before you open a pull request
 
 ```bash
+npm run generate     # the generated files tsc and the tests read
 npx tsc --noEmit
 npm test
 ```
 
-Both must pass, and CI runs them on every pull request. `npm run lint` is worth a
+All three, in that order: without `npm run generate` the typecheck fails on
+modules that do not exist yet. CI runs exactly this sequence on every pull
+request. `npm run lint` is worth a
 look but is not a gate: the tree carries pre-existing eslint errors, so chase the
 ones in your own files and ignore the rest.
 
-Two more checks run on every pull request: one that no premium file leaked into
-the public tree, and, when you touch the files they watch, a prompt linter
+Three more checks guard the tree: one that no premium file leaked, on every pull
+request, and two that run when you touch the files they watch, a prompt linter
 (`prompts.ts`) and an Andromeda contrast check. Keep the diff to one subject.
 
-Without the private vault, three suites are skipped rather than failed: the
-Andromeda Pro matrix, the hosted-MCP route and the icon download route. They
-assert on content a clone does not have. `vitest.config.ts` has the detail.
+Without the private vault, the suites that read it do not run: the Andromeda Pro
+matrix and tone rules and the icon download route are excluded (vitest prints a
+line saying so), and the hosted-MCP suite skips its premium cases and keeps the
+rest. Nothing fails for content a clone cannot have. `vitest.config.ts` has the
+detail.
 
 ## Reporting a bug
 
