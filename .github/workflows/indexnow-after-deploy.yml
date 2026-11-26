@@ -56,7 +56,7 @@ jobs:
           echo "::error::No successful production deploy within 15 minutes; nothing pinged."
           exit 1
       - name: Restore the list of URLs already pinged
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: indexnow-state.json
           key: indexnow-state-${{ github.run_id }}
@@ -64,7 +64,7 @@ jobs:
       - name: Ping new URLs
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/indexnow.ts --state=indexnow-state.json
       - name: Save the list
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: indexnow-state.json
           key: indexnow-state-${{ github.run_id }}
