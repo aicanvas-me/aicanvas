@@ -43,7 +43,7 @@ here. A clone builds the free library only, and that is the supported path.
 | Path | What's there |
 | --- | --- |
 | `components-workspace/<slug>/` | One free component: `index.tsx`, `prompts.ts`, often a `spec.md` |
-| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, `rules.md` (its design rules) and four templates under `examples/` |
+| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, `rules.md` (its design rules) and four templates under `examples/`, which holds a fifth that is not published |
 | `app/` | The aicanvas.me website (Next.js App Router) |
 | `app/lib/component-registry.tsx` | The catalog index. Append-only: slugs are a public contract |
 | `scripts/generate-registry.mjs` | Builds the shadcn registry JSON from the sources above |
@@ -74,6 +74,8 @@ npm run generate     # the generated files the typecheck and the tests read
 npm run typecheck
 npm test
 ```
+
+On Windows, `npm run typecheck` needs a POSIX shell (Git Bash or WSL).
 
 All three, in that order: without `npm run generate` the typecheck fails on
 modules that do not exist yet. The typecheck is the slow one and prints nothing

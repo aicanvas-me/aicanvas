@@ -254,7 +254,7 @@ Once the wrapper folder exists with `index.tsx`, `prompts.ts`, and `spec.md`, fo
    ```
    Copy the printed ImageKit URL and paste it into the registry entry's `image` field. The entry is not complete until the `image` field is a real ImageKit URL (not empty, not a placeholder).
 
-6. **Verify with `npx tsc --noEmit`** — must be exit 0. Any type error here usually means the boundary retyping (Pattern 1) missed a prop you're using in the JSX.
+6. **Verify with `npm run typecheck`** — must be exit 0. Any type error here usually means the boundary retyping (Pattern 1) missed a prop you're using in the JSX.
 
 7. **Smoke test in the browser**: open `http://localhost:3000/` and confirm the card appears at the end of the grid with the uploaded screenshot. Click into `http://localhost:3000/components/<slug>` and confirm the detail page renders the live component and shows the prompts drawer.
 

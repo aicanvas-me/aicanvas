@@ -11,7 +11,7 @@ Independent review of every built or modified component before the user previews
 ## Checklist
 
 ### 1. TypeScript
-- [ ] `npx tsc --noEmit` passes — any error = FAIL with the exact message
+- [ ] `npm run typecheck` passes — any error = FAIL with the exact message
 
 ### 2. File structure
 - [ ] `components-workspace/<slug>/index.tsx`, `prompts.ts`, `spec.md` all exist

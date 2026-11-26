@@ -32,7 +32,7 @@ Before writing or modifying ANY component inside `design-systems/<system>/`:
 
 ## TypeScript status
 
-Every tracked file in this folder is real TypeScript: typed props, typed `forwardRef` signatures, no `@ts-nocheck`. The folder is part of the tsc program (it is NOT in `tsconfig.exclude`), so `npx tsc --noEmit` checks all of it, including systems no page imports yet.
+Every tracked file in this folder is real TypeScript: typed props, typed `forwardRef` signatures, no `@ts-nocheck`. The folder is part of the tsc program (it is NOT in `tsconfig.exclude`), so `npm run typecheck` checks all of it, including systems no page imports yet.
 
 - Components export their prop types; examples annotate their data against those exported types.
 - Do NOT add a `@ts-nocheck` header to any file here. If the checker complains, fix the types.

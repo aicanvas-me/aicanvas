@@ -222,8 +222,8 @@ This repo is the real product: the website **and** the free component library.
 
 | Path | What's there |
 | --- | --- |
-| [`components-workspace/<slug>/`](./components-workspace) | Each free component: `index.tsx` source and its `prompts.ts` remix prompt, plus a `spec.md` on many, and a `_template` to copy |
-| [`design-systems/andromeda/`](./design-systems/andromeda) | The free Andromeda Legacy source: tokens, components, utilities |
+| [`components-workspace/<slug>/`](./components-workspace) | Each free component: `index.tsx` source and its `prompts.ts` remix prompt, plus a `spec.md` on many, and `_template` and `skills` alongside them |
+| [`design-systems/andromeda/`](./design-systems/andromeda) | The free Andromeda Legacy source: tokens, components, utilities, and `rules.md`, its design rules |
 | [`app/`](./app) | The aicanvas.me website (Next.js App Router) |
 | [`app/lib/component-registry.tsx`](./app/lib/component-registry.tsx) | The catalog index. Append-only: slugs are a public contract |
 | [`mcp/`](./mcp) | The `@aicanvas/mcp` server published to npm |
