@@ -26,6 +26,5 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
-      # tsc directly: the build script's chmod does not exist in the shell npm uses on Windows.
-      - run: npx tsc
+      - run: npm run build
       - run: node test/skill-add.mjs
