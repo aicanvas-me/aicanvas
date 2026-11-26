@@ -339,7 +339,7 @@ export async function runSkillCommand(argv: string[], opts: Options): Promise<nu
     if (existsSync(setup)) console.log(`\nOne-time setup on this machine (your agent also runs it the first time):\n  node "${setup}"`)
     console.log(`\nLicensed under the AI Canvas Premium License: https://aicanvas.me/premium-license`)
     if (report.length) console.error(`\nInstalled for ${done.length} of ${targets.length} agents.\n\n${report.join('\n\n')}`)
-    // The agent running this must get its own copy; a skip there is a failure for it.
+    // Fails if the caller's own copy was skipped (Codex is only named inside its sandbox).
     const caller = process.env.CLAUDECODE ? 'claude' : process.env.CODEX_SANDBOX ? 'codex' : null
     return skipped.some((s) => s.id && s.id === caller) ? 1 : 0
   } catch (e) {
