@@ -1,0 +1,13 @@
+/* Arial sized to the font's metrics, so text barely moves when the font loads. */
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Arial');
+  ascent-override: 75.79%;
+  descent-override: 22.29%;
+  line-gap-override: 0%;
+  size-adjust: 134.59%;
+}
+
+.jetbrainsMono {
+  --font-jetbrains-mono: 'JetBrains Mono', 'JetBrains Mono Fallback';
+}

@@ -4,17 +4,11 @@
 // is the site's (the `theme` cookie the script sets), applied by the same wrap
 // the component pages use, so light and dark match what visitors see.
 import { useEffect, useState } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { notFound, useSearchParams } from 'next/navigation'
 import { AndromedaThemeWrap } from '../../../design-systems/andromeda-pro/AndromedaThemeWrap'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import { Pose, hasPose } from './poses'
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
 
 const GROUND = `var(--at-surface-base, ${tokens.color.surface.base})`
 const SCREEN = `body{transform:scale(0.72);border-radius:12px;outline:1px solid var(--at-border-base, ${tokens.color.border.base});}`

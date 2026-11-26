@@ -1,0 +1,26 @@
+/* Arial sized to each font's metrics, so text barely moves when the font loads. */
+@font-face {
+  font-family: 'Manrope Fallback';
+  src: local('Arial');
+  ascent-override: 103.31%;
+  descent-override: 29.07%;
+  line-gap-override: 0%;
+  size-adjust: 103.19%;
+}
+
+@font-face {
+  font-family: 'Geist Mono Fallback';
+  src: local('Arial');
+  ascent-override: 74.67%;
+  descent-override: 21.92%;
+  line-gap-override: 0%;
+  size-adjust: 134.59%;
+}
+
+.manrope {
+  --font-manrope: 'Manrope', 'Manrope Fallback';
+}
+
+.geistMono {
+  --font-geist-mono: 'Geist Mono', 'Geist Mono Fallback';
+}

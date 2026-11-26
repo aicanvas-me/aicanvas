@@ -151,19 +151,13 @@ If a future DS is **intrinsically light or neutral** and its components render c
 
 ## Pattern 4 — Font variables must be loaded in the wrapper
 
-DS components often reference fonts via CSS custom properties (`--andromeda-font-mono`, etc.) that are set by the DS token file. The variables resolve to a font stack that starts with a specific font (e.g. JetBrains Mono), and the DS expects the font to be loaded via `next/font/google` at route scope.
+DS components often reference fonts via CSS custom properties (`--andromeda-font-mono`, etc.) that are set by the DS token file. The variables resolve to a font stack that starts with a specific font (e.g. JetBrains Mono), and the DS expects that font to be loaded at route scope.
 
 **The wrapper must load the font itself.** Without it, the CSS var falls back to the system monospace and the component looks wrong.
 
 ```tsx
 'use client'
-import { JetBrains_Mono } from 'next/font/google'
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 
 export function AndromedaButton() {
   return (
@@ -174,11 +168,9 @@ export function AndromedaButton() {
 }
 ```
 
-`next/font/google` works in client components (`'use client'`) as long as it's called at **module scope**, not inside the component body. The `.variable` className needs to be applied to an ancestor of the DS component so the CSS custom property cascades down to it.
+The `.variable` className needs to be applied to an ancestor of the DS component so the CSS custom property cascades down to it.
 
-If the DS uses a different font, swap the import:
-- JetBrains Mono → `import { JetBrains_Mono } from 'next/font/google'` (Andromeda)
-- Any other Google Font → `import { Font_Name } from 'next/font/google'` with matching `variable: '--font-font-name'`
+Site fonts are self-hosted in `app/_fonts/` through `next/font/local`, so a wrapper never loads its font through `next/font/google`: a Google Fonts hiccup during the Vercel build can fail the whole production deploy (vercel/next.js#99114). A DS with a different font gets its own module there, built the same way as `app/_fonts/jetbrains-mono.ts`: Google's per-script files, one `localFont` call each, and a CSS module that sets the variable.
 
 ## Writing the description
 

@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { AndromedaContentColumn } from './AndromedaContentColumn'
 import { AndromedaThemeSync } from './AndromedaThemeSync'
 
@@ -7,12 +7,6 @@ import { AndromedaThemeSync } from './AndromedaThemeSync'
 // Loading it at the layout level makes --font-jetbrains-mono available
 // to every Andromeda route (overview, showcase, per-component pages),
 // which the tokens reference via fontMono / fontSans.
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
-
 // Mirrors `app/ideation/layout.tsx` so every Andromeda route gets the
 // same sidebar + topbar chrome as the ideation playground. The content
 // column is forced to the Andromeda void background so it doesn't

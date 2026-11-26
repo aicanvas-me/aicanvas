@@ -1,14 +1,5 @@
 import { type ReactNode } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
-
-// Make JetBrains Mono available throughout the ideation subtree so any
-// Andromeda preview that references the --font-jetbrains-mono variable
-// resolves correctly without each page re-declaring the font loader.
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 
 // The /ideation subtree is the internal dev playground — keep every route
 // under it out of search indexes (it mirrors shipped pages). Pairs with the
@@ -26,7 +17,8 @@ export default function IdeationLayout({ children }: { children: ReactNode }) {
       // Pinned dark, on purpose. This subtree is not site chrome: it paints
       // with its own palette and has no light rendering, so it opts out of the
       // site theme the same way a preview box does, with a scoped `dark` class
-      // rather than by touching <html>.
+      // rather than by touching <html>. The font class gives every Andromeda
+      // preview below --font-jetbrains-mono.
       data-owns-scroll
       className={`dark flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-sand-950 md:flex-row ${jetbrainsMono.variable}`}
     >

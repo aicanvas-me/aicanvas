@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies, headers } from 'next/headers'
-import { Manrope, Geist_Mono } from 'next/font/google'
+import { manrope, geistMono } from '@/app/_fonts/site'
 import { GeistPixelCircle } from 'geist/font/pixel'
 import { Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
@@ -25,20 +25,6 @@ import { AI_CANVAS_DEFINITION, GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 import { isFramedPayloadRequest } from './lib/frame'
 import { hostedMcpOAuthEnabled } from '../lib/flags'
-
-const manrope = Manrope({
-  variable: '--font-manrope',
-  subsets: ['latin'],
-  // 400 to 800 set the site itself. 200 is the thin display weight of the
-  // Andromeda Pro stat readout: without it the browser draws that number at
-  // 400, wider and heavier than the component a buyer installs. Nothing uses 300.
-  weight: ['200', '400', '500', '600', '700', '800'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
 
 const TOTAL = TOTAL_COMPONENTS
 const GLOBAL_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
