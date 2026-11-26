@@ -7,7 +7,7 @@
 import { createServer } from 'node:http'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
-import { chmodSync, existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -52,7 +52,7 @@ const run = (args, env = {}, cwd = work) => new Promise((resolve) => {
   // spawnSync would block this process's own test server, so run async.
   import('node:child_process').then(({ spawn }) => {
     const p = spawn(process.execPath, [CLI, 'skill', ...args], {
-      cwd, env: { ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: '', CODEX_HOME: '', AICANVAS_TOKEN: '', AICANVAS_SITE_BASE: base, ...env },
+      cwd, env: { ...process.env, HOME: home, USERPROFILE: home, CLAUDE_CONFIG_DIR: '', CODEX_HOME: '', CLAUDECODE: '', CODEX_SANDBOX: '', AICANVAS_TOKEN: '', AICANVAS_SITE_BASE: base, ...env },
       stdio: ['ignore', 'pipe', 'pipe'],
     })
     let out = ''
@@ -124,7 +124,8 @@ try {
   check('one agent found: installs into ~/.claude/skills', r.code === 0 && existsSync(join(home, '.claude', 'skills', 'demo', 'SKILL.md')), r.out)
   mkdirSync(join(home, '.codex'), { recursive: true })
   r = await run(['add', 'demo', '--token', TOKEN])
-  check('several agents without a terminal: asks for --agent', r.code === 1 && r.out.includes('--agent'), r.out)
+  check('several agents found: installs for every one, no question', r.code === 0 && existsSync(join(home, '.claude', 'skills', 'demo', 'SKILL.md')) && existsSync(join(home, '.agents', 'skills', 'demo', 'SKILL.md')), r.out)
+  check('says it is ready now, with the fallback for each agent', r.out.includes('Ready now') && r.out.includes('/reload-skills') && r.out.includes('restart Codex'), r.out)
   r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'])
   check('--agent all installs Codex into ~/.agents/skills', r.code === 0 && existsSync(join(home, '.agents', 'skills', 'demo', 'SKILL.md')), r.out)
   check('nothing new in ~/.codex/skills', !existsSync(join(home, '.codex', 'skills', 'demo')))
@@ -186,16 +187,57 @@ try {
   r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir, '--force'])
   check('--force restores the file', r.code === 0 && !isSymlink(installed('engine/setup.mjs')), r.out)
 
-  // With two targets, a stop in the second leaves the first untouched.
+  // With two targets, a stop in one skips it, names it, and the other still installs.
   const two = { CLAUDE_CONFIG_DIR: join(work, 'cfg-a'), CODEX_HOME: join(work, 'cfg-b') }
+  const guideIn = (cfg) => join(work, cfg, 'skills', 'demo', 'references', 'guide.md')
   served = { zip: skillZip('3.0.0'), version: '3.0.0', sha: null }
   r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], two)
   check('two targets installed', r.code === 0, r.out)
-  writeFileSync(join(work, 'cfg-b', 'skills', 'demo', 'references', 'guide.md'), 'changed in b')
+  writeFileSync(guideIn('cfg-b'), 'changed in b')
   served = { zip: skillZip('3.1.0'), version: '3.1.0', sha: null }
   r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], two)
-  check('a stop in one target', r.code === 1 && r.out.includes('guide.md'), r.out)
-  check('leaves the other target as it was', readFileSync(join(work, 'cfg-a', 'skills', 'demo', 'references', 'guide.md'), 'utf8') === 'guide 3.0.0\n')
+  check('a stop in one target still installs the other', r.code === 0 && readFileSync(guideIn('cfg-a'), 'utf8') === 'guide 3.1.0\n', r.out)
+  check('the stopped target is named and left as it was', r.out.includes('Not installed for Codex') && r.out.includes('guide.md') && readFileSync(guideIn('cfg-b'), 'utf8') === 'changed in b', r.out)
+  check('the call line lists only the installed agent', r.out.includes('/demo in Claude Code') && !r.out.includes('$demo in Codex'), r.out)
+  writeFileSync(guideIn('cfg-a'), 'changed in a')
+  served = { zip: skillZip('3.2.0'), version: '3.2.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], two)
+  check('a stop in every target exits 1 and names both', r.code === 1 && !r.out.includes('Ready now') && r.out.includes('Not installed for Claude Code') && r.out.includes('Not installed for Codex'), r.out)
+  check('both stopped targets left as they were', readFileSync(guideIn('cfg-a'), 'utf8') === 'changed in a' && readFileSync(guideIn('cfg-b'), 'utf8') === 'changed in b')
+  check('a --force skip warns to ask the user first', r.out.includes('Ask the user before adding --force'), r.out)
+  r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all', '--force'], two)
+  check('--force updates every target', r.code === 0 && readFileSync(guideIn('cfg-a'), 'utf8') === 'guide 3.2.0\n' && readFileSync(guideIn('cfg-b'), 'utf8') === 'guide 3.2.0\n', r.out)
+  writeFileSync(guideIn('cfg-a'), 'changed in a')
+  served = { zip: skillZip('3.3.0'), version: '3.3.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], { ...two, CLAUDECODE: '1' })
+  check('run from Claude Code, its own copy skipped: exits 1', r.code === 1 && readFileSync(guideIn('cfg-b'), 'utf8') === 'guide 3.3.0\n', r.out)
+
+  // An unwritable skills folder is skipped with the way out; the other installs.
+  if (process.platform !== 'win32' && process.getuid?.() !== 0) {
+    const ro = { CLAUDE_CONFIG_DIR: join(work, 'ro-a'), CODEX_HOME: join(work, 'ro-b') }
+    mkdirSync(join(work, 'ro-a', 'skills'), { recursive: true })
+    chmodSync(join(work, 'ro-a', 'skills'), 0o555)
+    r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], { ...ro, CODEX_SANDBOX: 'seatbelt' })
+    const leftovers = readdirSync(join(work, 'ro-a', 'skills'))
+    chmodSync(join(work, 'ro-a', 'skills'), 0o755)
+    check('an unwritable folder is skipped, the other installs', r.code === 0 && existsSync(join(work, 'ro-b', 'skills', 'demo', 'SKILL.md')), r.out)
+    check('inside Codex the skip names the Codex sandbox', r.out.includes('Not installed for Claude Code') && r.out.includes('Codex\'s sandbox'), r.out)
+    check('the setup line points at the installed copy', r.out.includes(join('ro-b', 'skills', 'demo', 'engine', 'setup.mjs')) && !r.out.includes(join('ro-a', 'skills', 'demo')), r.out)
+    check('nothing left behind in the skipped folder', leftovers.length === 0, leftovers.join(', '))
+    chmodSync(join(work, 'ro-a', 'skills'), 0o555)
+    r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], ro)
+    chmodSync(join(work, 'ro-a', 'skills'), 0o755)
+    check('outside Codex the skip gives the general way out', r.out.includes('If an agent runs this') && !r.out.includes('Codex\'s sandbox'), r.out)
+  }
+
+  // The site cannot be reached: the cause and the way out, nothing installed.
+  const closed = createServer()
+  await new Promise((ok) => closed.listen(0, '127.0.0.1', ok))
+  const closedPort = closed.address().port
+  await new Promise((ok) => closed.close(ok))
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', join(work, 'offline')], { AICANVAS_SITE_BASE: `http://127.0.0.1:${closedPort}`, CODEX_SANDBOX: 'seatbelt' })
+  check('no network: names the cause', r.code === 1 && r.out.includes('ECONNREFUSED'), r.out)
+  check('no network inside Codex: names the Codex sandbox', r.out.includes('Codex\'s sandbox') && !existsSync(join(work, 'offline', 'demo')), r.out)
 
   r = await run(['add', 'demo', '-h'])
   check('-h shows help, installs nothing', r.code === 0 && r.out.includes('skill add'), r.out)

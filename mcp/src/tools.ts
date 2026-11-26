@@ -1409,7 +1409,7 @@ export function createServer(
       if (ctx.access && ctx.access.plan !== 'premium') return errorResult(lockedLine(`The ${skill.title} skill`) + ` Preview: ${pageUrl}`)
       const installCommand = `npx -y @aicanvas/mcp@latest skill add ${name} --token ${ctx.token || 'aic_YOUR_TOKEN'}`
       const authNote = ctx.token
-        ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is, in the user\'s shell with network access (outside any sandbox). Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
+        ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is. Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
         : `Replace aic_YOUR_TOKEN with the user's token: signed in as Premium, ${pageUrl} shows the command with it filled in. Without Premium the command stops with an upgrade link: ${UPGRADE_URL}`
       const out = { name, title: skill.title, tier: 'premium' as const, installCommand, pageUrl, licenseUrl: `${siteBase}/premium-license` }
       return {
@@ -1422,9 +1422,10 @@ export function createServer(
               '',
               authNote,
               '',
-              'It installs into the user-level skills folder (~/.claude/skills for Claude Code; ~/.agents/skills for Codex, or $CODEX_HOME/skills when set, and an earlier ~/.codex/skills install is updated in place; it asks, or takes --agent claude|codex|all, when both exist), never into the project. Running it again updates the skill and stops before overwriting files the user changed. Tell the user to start a new agent session, then call it with /<name> in Claude Code or $<name> in Codex.',
+              'It needs the network and writes to the user\'s home folder, so run it outside any sandbox on the first try. In Codex, request approval to run it outside the sandbox; do not try it sandboxed first.',
+              'It installs for every agent found on this machine without asking (--agent claude or --agent codex limits it to one): ~/.claude/skills for Claude Code, ~/.agents/skills for Codex ($CODEX_HOME/skills when set; an earlier ~/.codex/skills install is updated in place). Never into the project. Running it again updates the skill, but skips an agent\'s copy rather than overwrite files the user changed; never add --force without the user\'s yes, since it overwrites their changes.',
+              `The skill is ready in this session: call it with /${name} in Claude Code or $${name} in Codex. If it does not show up, run /reload-skills in Claude Code (or restart it), or restart Codex.`,
               skill.after,
-              'The agent loads a new skill in its next session.',
               `Page: ${pageUrl}`,
             ].join('\n'),
           ),
