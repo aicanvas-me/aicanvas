@@ -122,8 +122,7 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
 
       <p className={`mt-4 ${NOTE}`}>
         Installs for Claude Code and Codex, whichever you have, ready in the session you are in, and works with any
-        agent that reads SKILL.md. In Codex, approve the request to run it outside the sandbox: it downloads the skill
-        into your home folder.{' '}
+        agent that reads SKILL.md.{' '}
         {entry.requirements}{' '}
         <Link href="/premium-license" className={NOTE_LINK}>
           Licence
