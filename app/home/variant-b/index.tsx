@@ -48,11 +48,7 @@ export function WhooshSection(props: VariantProps) {
             <div className="relative">
               <div className="px-3 pb-4 pt-3 sm:px-4">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Start with a sentence</p>
-                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>              </div>
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-t border-sand-200 px-2 pt-3 text-[11px] font-semibold text-sand-600 dark:border-sand-800 dark:text-sand-400">
-                <span><span aria-hidden className="mr-2">↓</span>Your brief becomes a film</span><span>Made with whoosh</span>
-              </div>
-              <FilmWall />
+                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>              </div>              <FilmWall />
               <div className="flex flex-wrap justify-between gap-2 px-2 pb-1 pt-3 text-[11px] text-sand-600 dark:text-sand-400"><span>57 motion recipes</span><span>3D + physics</span><span>Up to 4K · 60 fps</span></div>
             </div>
           </div>
