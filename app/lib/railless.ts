@@ -7,6 +7,9 @@
 const PAGES = new Set([
   '/',
   '/home',
+  // homepage design variants, drawn like the homepage
+  '/preview/home-a',
+  '/preview/home-b',
   '/pricing',
   '/mcp',
   '/faq',
