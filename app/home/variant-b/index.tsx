@@ -40,18 +40,14 @@ export function WhooshSection(props: VariantProps) {
               <li key={step} className="flex items-center gap-3"><span className="font-mono text-xs text-sand-600 dark:text-sand-400">0{index + 1}</span>{step}</li>
             ))}
           </ol>
-          <div className="mt-7"><Link href="/skills/whoosh" className={CTA}>Make your first video<ArrowRight size={16} /></Link></div>
-          <p className="mt-3 text-xs leading-relaxed text-sand-600 dark:text-sand-400">Included with Premium. Renders on your machine.<br />{WHOOSH.requirements}</p>
-        </Reveal>
+          <div className="mt-7"><Link href="/skills/whoosh" className={CTA}>Make your first video<ArrowRight size={16} /></Link></div>        </Reveal>
         <Reveal delay={0.08} className="min-w-0">
           <div className={`relative overflow-hidden rounded-section bg-sand-100 p-2.5 sm:p-3 dark:bg-sand-900 ${styles.filmStage}`}>
             <StageLight />
             <div className="relative">
               <div className="px-3 pb-4 pt-3 sm:px-4">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Start with a sentence</p>
-                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>
-                <p className="mt-2 text-[11px] text-sand-600 dark:text-sand-400">Example prompt for your agent</p>
-              </div>
+                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>              </div>
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-t border-sand-200 px-2 pt-3 text-[11px] font-semibold text-sand-600 dark:border-sand-800 dark:text-sand-400">
                 <span><span aria-hidden className="mr-2">↓</span>Your brief becomes a film</span><span>Made with whoosh</span>
               </div>
