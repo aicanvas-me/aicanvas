@@ -83,6 +83,15 @@ export function SiteFooter() {
           @aicanvas/mcp
         </a>
       </nav>
+      <p className="mt-6 flex items-center gap-3 text-xs text-sand-600 dark:text-sand-500">
+        {/* The German flag as three dots; the black one keeps a ring so it shows on dark. */}
+        <span aria-hidden className="flex shrink-0 gap-1.5">
+          <span className="size-2.5 rounded-full bg-black ring-1 ring-sand-300 dark:ring-sand-700" />
+          <span className="size-2.5 rounded-full bg-[#DD0000]" />
+          <span className="size-2.5 rounded-full bg-[#FFCE00]" />
+        </span>
+        Designed and built in Germany. Ready for any agent.
+      </p>
     </footer>
   )
 }
