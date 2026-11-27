@@ -13,7 +13,21 @@ const linkCls = 'transition-colors hover:text-sand-700 dark:hover:text-sand-200'
 export function SiteFooter() {
   return (
     <footer className="mt-8 border-t border-sand-200 pt-8 dark:border-sand-800">
-      <p className="text-xs text-sand-600 dark:text-sand-500">© 2026 AI Canvas. The design layer for AI coding agents.</p>
+      <p className="flex items-start gap-3 text-xs text-sand-600 dark:text-sand-500">
+        {/* The German flag as three dots; the black one keeps a ring so it shows on dark. */}
+        <span aria-hidden className="mt-[3px] flex shrink-0 gap-1.5">
+          <span className="size-2.5 rounded-full bg-black ring-1 ring-sand-300 dark:ring-sand-700" />
+          <span className="size-2.5 rounded-full bg-[#DD0000]" />
+          <span className="size-2.5 rounded-full bg-[#FFCE00]" />
+        </span>
+        <span>
+          © 2026 AI Canvas. Designed and built in{' '}
+          <Link href="/impressum" className={`underline decoration-sand-300 underline-offset-2 dark:decoration-sand-700 ${linkCls}`}>
+            Germany
+          </Link>
+          , the design layer for AI coding agents.
+        </span>
+      </p>
       <nav
         aria-label="Footer"
         className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-sand-600 dark:text-sand-500"
@@ -83,15 +97,6 @@ export function SiteFooter() {
           @aicanvas/mcp
         </a>
       </nav>
-      <p className="mt-6 flex items-center gap-3 text-xs text-sand-600 dark:text-sand-500">
-        {/* The German flag as three dots; the black one keeps a ring so it shows on dark. */}
-        <span aria-hidden className="flex shrink-0 gap-1.5">
-          <span className="size-2.5 rounded-full bg-black ring-1 ring-sand-300 dark:ring-sand-700" />
-          <span className="size-2.5 rounded-full bg-[#DD0000]" />
-          <span className="size-2.5 rounded-full bg-[#FFCE00]" />
-        </span>
-        Designed and built in Germany. Ready for any agent.
-      </p>
     </footer>
   )
 }

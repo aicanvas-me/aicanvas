@@ -93,6 +93,7 @@ const organizationSchema = {
   description: AI_CANVAS_DEFINITION,
   url: SITE_URL,
   logo: `${SITE_URL}/ai-canvas-icon-square.svg`,
+  address: { '@type': 'PostalAddress', addressCountry: 'DE' },
   sameAs: [GITHUB_URL],
 }
 
