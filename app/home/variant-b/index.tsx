@@ -59,7 +59,6 @@ export function WhooshSection(props: VariantProps) {
               <div className="flex flex-wrap justify-between gap-2 px-2 pb-1 pt-3 text-[11px] text-sand-600 dark:text-sand-400"><span>57 motion recipes</span><span>3D + physics</span><span>Up to 4K · 60 fps</span></div>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400"><p>Three examples. Playing silently.</p><Link href="/skills/whoosh#skills-films" className={`${buttonClasses({ variant: 'link', size: 'sm' })} motion-reduce:transition-none motion-reduce:active:scale-100`}>Watch all nine films<ArrowRight size={14} /></Link></div>
         </Reveal>
       </div>
     </section>
