@@ -70,7 +70,7 @@ export function IconsSection(props: VariantProps) {
           <h2 id="vb-icons" className={`mt-3 ${H2}`}>Small details.<br />Entirely your style.</h2>
           <p className={`mt-5 ${SUB}`}>{props.iconCount > 0 ? `${props.iconCount.toLocaleString('en-US')} icons. ` : 'A complete icon family. '}25 categories. One precise 24 px grid. Tune the size, weight and colour until every icon feels at home in your interface.</p>
           <div className="mt-6 space-y-4 text-sm">
-            <p className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-free" /><span><strong className="font-semibold text-sand-900 dark:text-sand-50">Start with Line. It’s free.</strong><br />No account needed.</span></p>
+            <p className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-free" /><span><strong className="font-semibold text-sand-900 dark:text-sand-50">Start with Line. It’s free.</strong><br />Every icon, five weights, any size and colour.</span></p>
             <div className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-premium" /><div><p className="flex flex-wrap items-center gap-2 font-semibold text-sand-900 dark:text-sand-50">Go further with four styles.<PremiumBadge /></p><p>Line, Duotone, Solid and Solid duotone.</p></div></div>
           </div>
           <div className="mt-7"><Link href="/icons" className={CTA}>Find your icons<ArrowRight size={16} /></Link></div>        </Reveal>
