@@ -73,9 +73,7 @@ export function IconsSection(props: VariantProps) {
             <p className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-free" /><span><strong className="font-semibold text-sand-900 dark:text-sand-50">Start with Line. It’s free.</strong><br />No account needed.</span></p>
             <div className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-premium" /><div><p className="flex flex-wrap items-center gap-2 font-semibold text-sand-900 dark:text-sand-50">Go further with four styles.<PremiumBadge /></p><p>Line, Duotone, Solid and Solid duotone.</p></div></div>
           </div>
-          <div className="mt-7"><Link href="/icons" className={CTA}>Find your icons<ArrowRight size={16} /></Link></div>
-          <p className="mt-3 text-xs leading-relaxed text-sand-600 dark:text-sand-400">Install one icon or the set. Or ask your agent<br className="hidden xl:block" /> through the AI Canvas MCP.</p>
-        </Reveal>
+          <div className="mt-7"><Link href="/icons" className={CTA}>Find your icons<ArrowRight size={16} /></Link></div>        </Reveal>
       </div>
     </section>
   )
