@@ -138,14 +138,15 @@ export default function SkillsPage() {
             <div className="mt-10 grid gap-10 px-2 pb-4 sm:mt-14 sm:px-5 sm:pb-6">
               <div>
                 <KindPill kind={FEATURED.kind} />
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
+                <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-3">
                   <h2
                     id="whoosh-name"
                     className="text-5xl font-extrabold tracking-tight text-sand-900 sm:text-7xl dark:text-sand-50"
                   >
-                    {FEATURED.name}
+                    {FEATURED.name}<span aria-hidden className="text-new">.</span>
                   </h2>
-                  <span aria-hidden className="h-10 w-px bg-sand-200 sm:h-14 dark:bg-sand-800" />
+                  {/* Bottom on the baseline, top at the x-height of the name. */}
+                  <span aria-hidden className="h-6 w-px bg-sand-200 sm:h-10 dark:bg-sand-800" />
                   <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-sand-900 dark:text-sand-50">
                     <span aria-hidden className="size-1.5 rounded-full bg-new" />
                     New
