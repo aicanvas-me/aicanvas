@@ -26,8 +26,10 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
-import { IconSpecimen, type SpecimenIcon } from './IconSpecimen'
-import { HomeReel } from './HomeReel'
+import type { SpecimenIcon } from './IconSpecimen'
+import * as VariantCurrent from './variant-current'
+import * as VariantA from './variant-a'
+import * as VariantB from './variant-b'
 import { HeroBoard, type BoardPiece, type BoardSystem, type HeroIcon } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
@@ -35,7 +37,6 @@ import { ValueBento } from './ValueBento'
 import { Wordmark } from '../components/Wordmark'
 import { StageLight } from '../components/StageLight'
 import { ProductHuntBadge } from './ProductHuntBadge'
-import { PremiumBadge } from '../components/billing/PremiumBadge'
 
 interface Props {
   /** Every standalone, free and premium. */
@@ -54,6 +55,8 @@ interface Props {
   iconCount: number
   /** The hero board's standalone cards. */
   boardPieces: BoardPiece[]
+  /** Which design of the whoosh and icon sections to render; the live page passes none. */
+  variant?: 'a' | 'b'
 }
 
 const PREMIUM = premiumEnabled()
@@ -98,7 +101,10 @@ export function HomePage({
   specimenIcons,
   iconCount,
   boardPieces,
+  variant,
 }: Props) {
+  const Variant = variant === 'a' ? VariantA : variant === 'b' ? VariantB : VariantCurrent
+  const variantProps = { iconCount, lineIcons: specimenIcons }
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
   // design-system components and templates, which live in their own registry.
@@ -384,47 +390,12 @@ export function HomePage({
           <WireIcons target="v3-chapter" />
         </div>
 
-        {/* ── whoosh ──
-             The newest thing we sell leads the catalog, ahead of Andromeda;
-             the bridge line says why a video belongs on a page about
-             interfaces. Premium only, so no flag means no section. ── */}
-        {PREMIUM && (
-          <section aria-labelledby="v3-whoosh" className="mx-auto mt-20 max-w-6xl sm:mt-32">
-            <Reveal className="mx-auto mb-10 max-w-2xl text-center">
-              <p className="text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
-                Built it? Give it a launch.
-              </p>
-            </Reveal>
-            <div className="grid items-center gap-8 lg:grid-cols-5 lg:gap-12">
-              <Reveal className="lg:col-span-3">
-                <HomeReel />
-              </Reveal>
-              <Reveal className="lg:col-span-2">
-                <p className={`flex flex-wrap items-center gap-2 ${EYEBROW}`}>
-                  whoosh
-                  <span aria-hidden>·</span>
-                  Agent skill
-                  <PremiumBadge />
-                </p>
-                <h2 id="v3-whoosh" className={`mt-2 ${H2}`}>
-                  Describe it. Your agent makes the video.
-                </h2>
-                <p className={`mt-4 ${SUB}`}>
-                  Turn the interface you built into a launch video, a product demo or a reel. whoosh gives Claude
-                  Code and Codex a way to make one: your prompt becomes a draft with sound you approve, then a finished
-                  mp4 at up to 4K.
-                </p>
-                <p className={`mt-3 text-sm ${SUB}`}>Renders on your own machine. Needs Node and ffmpeg.</p>
-                <div className="mt-6">
-                  <Link href="/skills/whoosh" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-                    Watch examples and install
-                    <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </Reveal>
-            </div>
-          </section>
-        )}
+        {/* ── whoosh, then the icon set, above the Andromeda chapter. The
+             design comes from the variant this page was given: the live page
+             renders the current one, /preview/home-a and /preview/home-b the
+             two contenders. ── */}
+        {PREMIUM && <Variant.WhooshSection {...variantProps} />}
+        <Variant.IconsSection {...variantProps} />
 
         {/* ── The Andromeda chapter: the system, its Brain, then its screens ── */}
         <div id="v3-chapter" className="mx-auto max-w-6xl scroll-mt-24">
@@ -475,28 +446,6 @@ export function HomePage({
           <div className="mt-8 flex justify-center">
             <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
               Browse all {total} standalones
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-        </section>
-
-        {/* ── The icon set: the Line spread over the same four icons in all
-             four styles, so what Premium adds is visible, not described ── */}
-        <section aria-labelledby="v3-icons" className="mt-20 sm:mt-32">
-          <Reveal className="mx-auto mb-10 max-w-2xl text-center">
-            <p className={EYEBROW}>The icon set</p>
-            <h2 id="v3-icons" className={`mt-2 ${H2}`}>
-              One icon family. Four ways to finish your interface.
-            </h2>
-            <p className={`mx-auto mt-3 max-w-xl ${SUB}`}>
-              {iconCount > 0 ? `${iconCount} icons` : 'Every icon'}, one file each, so you install one or the whole set.
-              Start with Line, free with no account. Duotone, Solid and Solid duotone come with Premium.
-            </p>
-          </Reveal>
-          <IconSpecimen icons={specimenIcons} />
-          <div className="mt-8 flex justify-center">
-            <Link href="/icons" prefetch={false} className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-              Explore the icons
               <ArrowRight size={14} />
             </Link>
           </div>
