@@ -38,10 +38,10 @@ function Film({ film, className }: { film: typeof TILE_FILMS[number]; className:
   }, [requested])
 
   return (
-    <div className={`relative min-h-0 overflow-hidden rounded-[14px] bg-sand-950 ${className}`}>
+    <div className={`relative min-h-0 overflow-hidden rounded-card bg-sand-950 ${className}`}>
       <video ref={ref} src={film.src} poster={film.poster} muted loop playsInline preload="none" aria-label={`${film.label} made with whoosh`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} className="absolute inset-0 h-full w-full object-cover" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-sand-950/90 to-transparent" />
-      <span className="pointer-events-none absolute bottom-3 left-3 max-w-[calc(100%-3.5rem)] text-[10px] font-semibold text-sand-50 sm:text-xs">{film.label}</span>
+      <span className="pointer-events-none absolute bottom-3 left-3 max-w-[calc(100%-3.5rem)] text-[11px] font-semibold text-sand-50 sm:text-xs">{film.label}</span>
       <button type="button" aria-label={`${playing ? 'Pause' : 'Play'} ${film.label}`} onClick={() => setRequested(!playing)} className={`${buttonClasses({ variant: 'icon', size: 'sm' })} ${styles.filmControl} absolute right-1.5 bottom-1.5`}>
         {playing ? <Pause size={14} /> : <Play size={14} />}
       </button>

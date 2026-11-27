@@ -13,7 +13,7 @@ import styles from './variant.module.css'
 const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 const H2 = 'text-balance text-3xl font-bold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50'
 const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
-const CTA = `${buttonClasses({ variant: 'outline', size: 'lg' })} ${styles.cta}`
+const CTA = `${buttonClasses({ variant: 'primary', size: 'lg' })} motion-reduce:transition-none motion-reduce:active:scale-100`
 
 function NewMark() {
   return <span className="inline-flex items-center gap-1.5 text-xs font-semibold normal-case tracking-normal text-sand-900 dark:text-sand-50"><span aria-hidden className="size-1.5 rounded-full bg-new" />New</span>
@@ -44,17 +44,22 @@ export function WhooshSection(props: VariantProps) {
           <p className="mt-3 text-xs leading-relaxed text-sand-600 dark:text-sand-400">Included with Premium. Renders on your machine.<br />{WHOOSH.requirements}</p>
         </Reveal>
         <Reveal delay={0.08} className="min-w-0">
-          <div className={`relative overflow-hidden rounded-[24px] bg-sand-100 p-2.5 sm:p-3 dark:bg-sand-900 ${styles.filmStage}`}>
+          <div className={`relative overflow-hidden rounded-section bg-sand-100 p-2.5 sm:p-3 dark:bg-sand-900 ${styles.filmStage}`}>
             <StageLight />
             <div className="relative">
-              <div className="flex items-center justify-between gap-3 px-2 pb-3 pt-1 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-                <span>Made with whoosh</span><span>One skill. Many formats.</span>
+              <div className="px-3 pb-4 pt-3 sm:px-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Start with a sentence</p>
+                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>
+                <p className="mt-2 text-[11px] text-sand-600 dark:text-sand-400">Example prompt for your agent</p>
+              </div>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-t border-sand-200 px-2 pt-3 text-[11px] font-semibold text-sand-600 dark:border-sand-800 dark:text-sand-400">
+                <span><span aria-hidden className="mr-2">↓</span>Your brief becomes a film</span><span>Made with whoosh</span>
               </div>
               <FilmWall />
               <div className="flex flex-wrap justify-between gap-2 px-2 pb-1 pt-3 text-[11px] text-sand-600 dark:text-sand-400"><span>57 motion recipes</span><span>3D + physics</span><span>Up to 4K · 60 fps</span></div>
             </div>
           </div>
-          <div className="mt-5 flex items-start gap-3 px-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400"><span aria-hidden className="pt-0.5 font-mono">↳</span><p>From a brief to a film. These are real whoosh examples, playing silently.</p></div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400"><p>Three examples. Playing silently.</p><Link href="/skills/whoosh#skills-films" className={`${buttonClasses({ variant: 'link', size: 'sm' })} motion-reduce:transition-none motion-reduce:active:scale-100`}>Watch all nine films<ArrowRight size={14} /></Link></div>
         </Reveal>
       </div>
     </section>
@@ -62,7 +67,6 @@ export function WhooshSection(props: VariantProps) {
 }
 
 export function IconsSection(props: VariantProps) {
-  const count = props.iconCount > 0 ? props.iconCount : 820
   return (
     <section id="vb-icons-section" aria-labelledby="vb-icons" className="mx-auto mt-20 max-w-6xl sm:mt-32">
       <div className="grid items-center gap-10 lg:grid-cols-[1.25fr_0.85fr] lg:gap-12">
@@ -72,7 +76,7 @@ export function IconsSection(props: VariantProps) {
         <Reveal>
           <div className={`flex items-center gap-3 ${EYEBROW}`}><span>The AI Canvas icon set</span><NewMark /></div>
           <h2 id="vb-icons" className={`mt-3 ${H2}`}>Small details.<br />Entirely your style.</h2>
-          <p className={`mt-5 ${SUB}`}>{count.toLocaleString('en-US')} icons. 25 categories. One precise 24 px grid. Tune the size, weight and colour until every icon feels at home in your interface.</p>
+          <p className={`mt-5 ${SUB}`}>{props.iconCount > 0 ? `${props.iconCount.toLocaleString('en-US')} icons. ` : 'A complete icon family. '}25 categories. One precise 24 px grid. Tune the size, weight and colour until every icon feels at home in your interface.</p>
           <div className="mt-6 space-y-4 text-sm">
             <p className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-free" /><span><strong className="font-semibold text-sand-900 dark:text-sand-50">Start with Line. It’s free.</strong><br />No account needed.</span></p>
             <div className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-premium" /><div><p className="flex flex-wrap items-center gap-2 font-semibold text-sand-900 dark:text-sand-50">Go further with four styles.<PremiumBadge /></p><p>Line, Duotone, Solid and Solid duotone.</p></div></div>

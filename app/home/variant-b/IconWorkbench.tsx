@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import type { SpecimenIcon } from '../IconSpecimen'
 import { IconSvg } from '@/app/icons/_components/IconSvg'
 import { ICON_WEIGHTS } from '@/app/icons/_lib/icon-utils'
@@ -17,10 +17,10 @@ import styles from './variant.module.css'
 
 const COLOURS = [
   { label: 'Neutral', value: 'currentColor', swatch: 'var(--vb-neutral)' },
-  { label: 'Cyan', value: '#22D3EE', swatch: '#22D3EE' },
-  { label: 'Orange', value: '#FB923C', swatch: '#FB923C' },
-  { label: 'Purple', value: '#A78BFA', swatch: '#A78BFA' },
-  { label: 'Green', value: '#4ADE80', swatch: '#4ADE80' },
+  { label: 'Cyan', value: 'var(--premium)', swatch: 'var(--premium)' },
+  { label: 'Orange', value: 'var(--free)', swatch: 'var(--free)' },
+  { label: 'Purple', value: 'var(--new)', swatch: 'var(--new)' },
+  { label: 'Green', value: 'var(--success)', swatch: 'var(--success)' },
 ]
 const FALLBACKS = [Heart, Bolt, Star, Bell]
 const STYLES = [
@@ -31,20 +31,72 @@ const STYLES = [
 ]
 
 export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
-  const [size, setSize] = useState(32)
-  const [weightIndex, setWeightIndex] = useState(2)
-  const [colourIndex, setColourIndex] = useState(0)
+  const panel = useRef<HTMLDivElement>(null)
+  const stopDemo = useRef<() => void>(() => {})
+  const [{ size, weightIndex, colourIndex }, setTuning] = useState({ size: 24, weightIndex: 2, colourIndex: 0 })
   const weight = ICON_WEIGHTS[weightIndex]
   const colour = COLOURS[colourIndex]
 
+  useEffect(() => {
+    const element = panel.current
+    if (!element) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let frame = 0
+    let started = false
+    let stopped = reduced.matches
+    const stop = () => {
+      stopped = true
+      cancelAnimationFrame(frame)
+    }
+    stopDemo.current = stop
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
+        if (started) stop()
+        return
+      }
+      if (started || stopped || document.hidden) return
+      started = true
+      let start: number | undefined
+      const tick = (now: number) => {
+        if (stopped) return
+        start ??= now
+        const elapsed = now - start
+        // One five-second demonstration, then the controls belong to the visitor.
+        const progress = Math.min(elapsed / 1400, 1)
+        const nextSize = Math.round(24 + 24 * (1 - (1 - progress) ** 3))
+        const nextWeight = elapsed < 1000 ? 2 : elapsed < 1800 ? 0 : elapsed < 2800 ? 4 : 2
+        const nextColour = elapsed < 2600 ? 0 : elapsed < 3400 ? 1 : elapsed < 4100 ? 3 : 4
+        setTuning(current => current.size === nextSize && current.weightIndex === nextWeight && current.colourIndex === nextColour
+          ? current
+          : { size: nextSize, weightIndex: nextWeight, colourIndex: nextColour })
+        if (elapsed < 5000) frame = requestAnimationFrame(tick)
+      }
+      frame = requestAnimationFrame(tick)
+    }, { threshold: [0, 0.5] })
+    observer.observe(element)
+    const onPreference = () => { if (reduced.matches) stop() }
+    const onVisibility = () => { if (document.hidden && started) stop() }
+    reduced.addEventListener('change', onPreference)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      stop()
+      observer.disconnect()
+      reduced.removeEventListener('change', onPreference)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [])
+
+  const takeControl = () => stopDemo.current()
+
   return (
     <div className={styles.workbenchContainer}>
-      <div className={`${styles.workbench} relative overflow-hidden rounded-[24px] bg-sand-100 text-sand-900 dark:bg-sand-900 dark:text-sand-50`}>
+      <div ref={panel} className={`${styles.workbench} relative overflow-hidden rounded-section bg-sand-100 text-sand-900 dark:bg-sand-900 dark:text-sand-50`}>
         <StageLight />
         <div className="relative">
           <div className="flex items-center justify-between gap-3 border-b border-sand-200 px-5 py-4 dark:border-sand-800">
-            <span className="text-xs font-semibold">Make them yours.</span>
-            <span className="font-mono text-[10px] text-sand-600 dark:text-sand-400">LIVE PREVIEW / LINE</span>
+            <span className="text-xs font-semibold">Icon workbench</span>
+            <span className="font-mono text-[11px] text-sand-600 dark:text-sand-400">LIVE PREVIEW / LINE</span>
           </div>
           <div className={styles.tuningLayout}>
             <div className={styles.iconGrid} aria-hidden>
@@ -52,31 +104,31 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
                 const Fallback = FALLBACKS[index % FALLBACKS.length]
                 return (
                   <span key={icon.name} className={styles.iconCell}>
-                    <span key={colourIndex} className={colourIndex ? styles.colourPop : ''} style={{ '--vb-delay': `${((index % 6) + Math.floor(index / 6)) * 30}ms` } as CSSProperties}>
+                    <span key={colourIndex} className={colourIndex ? styles.colourPop : ''} style={{ '--vb-delay-6': `${((index % 6) + Math.floor(index / 6)) * 30}ms`, '--vb-delay-4': `${((index % 4) + Math.floor(index / 4)) * 30}ms` } as CSSProperties}>
                       {icon.markup ? <IconSvg markup={icon.markup} size={size} weight={weight.id} colour={colour.value} /> : <Fallback size={size} weight={weight.id} color={colour.value} />}
                     </span>
                   </span>
                 )
               })}
             </div>
-            <div className={`${styles.controls} border-sand-200 dark:border-sand-800`}>
+            <div onPointerDownCapture={takeControl} onFocusCapture={takeControl} onKeyDownCapture={takeControl} className={`${styles.controls} border-sand-200 dark:border-sand-800`}>
               <div>
-                <label htmlFor="vb-icon-size" className="flex justify-between gap-2 text-xs font-semibold">Size<output className="font-mono font-normal text-sand-600 dark:text-sand-400">{size}px</output></label>
-                <input id="vb-icon-size" type="range" min="24" max="48" step="1" value={size} onChange={event => setSize(Number(event.target.value))} className={styles.range} />
+                <label htmlFor="vb-icon-size" className="flex justify-between gap-2 text-xs font-semibold">Size<output aria-live="off" className="font-mono font-normal text-sand-600 dark:text-sand-400">{size}px</output></label>
+                <input id="vb-icon-size" type="range" min="24" max="48" step="1" value={size} onChange={event => { takeControl(); setTuning(current => ({ ...current, size: Number(event.target.value) })) }} className={styles.range} />
               </div>
               <div>
-                <label htmlFor="vb-icon-weight" className="flex flex-wrap justify-between gap-1 text-xs font-semibold">Weight<output className="font-normal text-sand-600 dark:text-sand-400">{weight.label}</output></label>
-                <input id="vb-icon-weight" type="range" min="0" max="4" step="1" value={weightIndex} aria-valuetext={weight.label} onChange={event => setWeightIndex(Number(event.target.value))} className={styles.range} />
-                <div className="flex justify-between text-[9px] text-sand-600 dark:text-sand-400"><span>Thin</span><span>Extra Bold</span></div>
+                <label htmlFor="vb-icon-weight" className="flex flex-wrap justify-between gap-1 text-xs font-semibold">Weight<output aria-live="off" className="font-normal text-sand-600 dark:text-sand-400">{weight.label}</output></label>
+                <input id="vb-icon-weight" type="range" min="0" max="4" step="1" value={weightIndex} aria-valuetext={weight.label} onChange={event => { takeControl(); setTuning(current => ({ ...current, weightIndex: Number(event.target.value) })) }} className={styles.range} />
+                <div className="flex justify-between gap-2 text-[11px] text-sand-600 dark:text-sand-400"><span>Thin</span><span>Extra Bold</span></div>
               </div>
               <fieldset className="min-w-0"><legend className="mb-2 text-xs font-semibold">Colour</legend><div className="flex flex-wrap gap-1">
-                {COLOURS.map((item, index) => <button key={item.label} type="button" aria-label={`${item.label} icons`} aria-pressed={colourIndex === index} onClick={() => setColourIndex(index)} className={`${buttonClasses({ variant: 'icon', size: 'xs' })} ${styles.swatch} ${colourIndex === index ? styles.selectedSwatch : ''}`}><span style={{ background: item.swatch }} /></button>)}
+                {COLOURS.map((item, index) => <button key={item.label} type="button" aria-label={`${item.label} icons`} aria-pressed={colourIndex === index} onClick={() => { takeControl(); setTuning(current => ({ ...current, colourIndex: index })) }} className={`${buttonClasses({ variant: 'icon', size: 'xs' })} ${styles.swatch} ${colourIndex === index ? styles.selectedSwatch : ''}`}><span style={{ background: item.swatch }} /></button>)}
               </div></fieldset>
             </div>
           </div>
-          <div className="flex items-center justify-between border-y border-sand-200 px-5 py-3 dark:border-sand-800"><span className="text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">One family. Four expressions.</span><span className="font-mono text-[10px] text-sand-600 dark:text-sand-400">24 px grid</span></div>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-y border-sand-200 px-5 py-3 dark:border-sand-800"><span className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">One family. Four expressions.</span><span className="font-mono text-[11px] text-sand-600 dark:text-sand-400">24 px grid</span></div>
           <div className="grid grid-cols-4 gap-1 px-3 py-5">
-            {STYLES.map(({ name, Icon, tier }) => <div key={name} className="flex flex-col items-center gap-2 text-center"><Icon size={36} /><span className="mt-1 text-[10px] font-semibold sm:text-xs">{name}</span><span className="flex items-center gap-1 text-[9px] text-sand-600 dark:text-sand-400"><span aria-hidden className={`size-1 rounded-full ${tier === 'Free' ? 'bg-free' : 'bg-premium'}`} />{tier}</span></div>)}
+            {STYLES.map(({ name, Icon, tier }) => <div key={name} className="flex flex-col items-center gap-2 text-center"><Icon size={36} /><span className="mt-1 text-[11px] font-semibold sm:text-xs">{name}</span><span className="flex items-center gap-1 text-[11px] text-sand-600 dark:text-sand-400"><span aria-hidden className={`size-1 rounded-full ${tier === 'Free' ? 'bg-free' : 'bg-premium'}`} />{tier}</span></div>)}
           </div>
         </div>
       </div>

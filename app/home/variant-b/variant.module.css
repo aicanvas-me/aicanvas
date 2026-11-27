@@ -1,11 +1,3 @@
-.cta {
-  background: var(--color-sand-900);
-  border-color: var(--color-sand-900);
-  color: var(--color-sand-50);
-}
-.cta:hover { background: var(--color-sand-700); color: var(--color-sand-50); }
-:global(.dark) .cta { background: var(--color-sand-50); border-color: var(--color-sand-50); color: var(--color-sand-900); }
-:global(.dark) .cta:hover { background: var(--color-sand-200); color: var(--color-sand-900); }
 .filmStage { box-shadow: 0 24px 60px -32px color-mix(in srgb, var(--color-sand-950) 45%, transparent); }
 .filmControl { color: var(--color-sand-50); background: color-mix(in srgb, var(--color-sand-950) 70%, transparent); }
 .filmControl:hover { color: var(--color-sand-50); background: var(--color-sand-800); }
@@ -29,7 +21,7 @@
 .swatch { width: 20px; height: 28px; border-radius: 6px; }
 .swatch > span { display: block; width: 12px; height: 12px; border-radius: 50%; }
 .selectedSwatch { outline: 1px solid var(--vb-neutral); outline-offset: 1px; }
-.colourPop { animation: colour-pop 400ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--vb-delay); }
+.colourPop { animation: colour-pop 400ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--vb-delay-6); }
 @keyframes colour-pop { 0% { transform: scale(.82); } 65% { transform: scale(1.08); } 100% { transform: scale(1); } }
 @container (max-width: 540px) {
   .tuningLayout { grid-template-columns: 1fr; }
@@ -39,6 +31,7 @@
 }
 @container (max-width: 340px) {
   .iconGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .colourPop { animation-delay: var(--vb-delay-4); }
   .iconCell { height: 56px; }
   .controls { grid-template-columns: 1fr 1fr; }
   .controls fieldset { grid-column: span 2; }
@@ -47,6 +40,6 @@
 @media (prefers-reduced-motion: reduce) {
   .workbench, .workbench:hover, .workbench:focus-within { transform: none; transition: none; }
   .colourPop { animation: none; }
-  .iconCell svg, .cta, .filmControl, .swatch { transition: none; }
-  .cta:active, .filmControl:active, .swatch:active { transform: none; }
+  .iconCell svg, .filmControl, .swatch { transition: none; }
+  .filmControl:active, .swatch:active { transform: none; }
 }
