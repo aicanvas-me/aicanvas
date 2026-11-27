@@ -7,9 +7,6 @@ import { ICON_WEIGHTS } from '@/app/icons/_lib/icon-utils'
 import { StageLight } from '@/app/components/StageLight'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { Heart } from '@/app/_icons/icons/heart'
-import { HeartDuotone } from '@/app/_icons/icons/heart-duotone'
-import { HeartSolid } from '@/app/_icons/icons/heart-solid'
-import { HeartSolidDuotone } from '@/app/_icons/icons/heart-solid-duotone'
 import { Bell } from '@/app/_icons/icons/bell'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { Star } from '@/app/_icons/icons/star'
@@ -23,12 +20,9 @@ const COLOURS = [
   { label: 'Green', value: 'var(--success)', swatch: 'var(--success)' },
 ]
 const FALLBACKS = [Heart, Bolt, Star, Bell]
-const STYLES = [
-  { name: 'Line', Icon: Heart, tier: 'Free' },
-  { name: 'Duotone', Icon: HeartDuotone, tier: 'Premium' },
-  { name: 'Solid', Icon: HeartSolid, tier: 'Premium' },
-  { name: 'Solid duotone', Icon: HeartSolidDuotone, tier: 'Premium' },
-]
+const CELLS = 32
+// A cell's place in the colour wave for each column count the grid can take.
+const wave = (index: number, columns: number) => `${((index % columns) + Math.floor(index / columns)) * 30}ms`
 
 export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
   const panel = useRef<HTMLDivElement>(null)
@@ -98,13 +92,13 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
             <span className="text-xs font-semibold">Icon workbench</span>
             <span className="font-mono text-[11px] text-sand-600 dark:text-sand-400">LIVE PREVIEW / LINE</span>
           </div>
-          <div className={styles.tuningLayout}>
+          <div>
             <div className={styles.iconGrid} aria-hidden>
-              {(icons.length ? icons.slice(0, 24) : Array.from({ length: 24 }, (_, index) => ({ name: `fallback-${index}`, markup: '' }))).map((icon, index) => {
+              {(icons.length ? icons.slice(0, CELLS) : Array.from({ length: CELLS }, (_, index) => ({ name: `fallback-${index}`, markup: '' }))).map((icon, index) => {
                 const Fallback = FALLBACKS[index % FALLBACKS.length]
                 return (
                   <span key={icon.name} className={styles.iconCell}>
-                    <span key={colourIndex} className={colourIndex ? styles.colourPop : ''} style={{ '--vb-delay-6': `${((index % 6) + Math.floor(index / 6)) * 30}ms`, '--vb-delay-4': `${((index % 4) + Math.floor(index / 4)) * 30}ms` } as CSSProperties}>
+                    <span key={colourIndex} className={colourIndex ? styles.colourPop : ''} style={{ '--vb-delay-8': wave(index, 8), '--vb-delay-6': wave(index, 6), '--vb-delay-4': wave(index, 4) } as CSSProperties}>
                       {icon.markup ? <IconSvg markup={icon.markup} size={size} weight={weight.id} colour={colour.value} /> : <Fallback size={size} weight={weight.id} color={colour.value} />}
                     </span>
                   </span>
@@ -125,10 +119,6 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
                 {COLOURS.map((item, index) => <button key={item.label} type="button" aria-label={`${item.label} icons`} aria-pressed={colourIndex === index} onClick={() => { takeControl(); setTuning(current => ({ ...current, colourIndex: index })) }} className={`${buttonClasses({ variant: 'icon', size: 'xs' })} ${styles.swatch} ${colourIndex === index ? styles.selectedSwatch : ''}`}><span style={{ background: item.swatch }} /></button>)}
               </div></fieldset>
             </div>
-          </div>
-          <div className="flex flex-wrap items-center justify-between gap-2 border-y border-sand-200 px-5 py-3 dark:border-sand-800"><span className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">One family. Four expressions.</span><span className="font-mono text-[11px] text-sand-600 dark:text-sand-400">24 px grid</span></div>
-          <div className="grid grid-cols-4 gap-1 px-3 py-5">
-            {STYLES.map(({ name, Icon, tier }) => <div key={name} className="flex flex-col items-center gap-2 text-center"><Icon size={36} /><span className="mt-1 text-[11px] font-semibold sm:text-xs">{name}</span><span className="flex items-center gap-1 text-[11px] text-sand-600 dark:text-sand-400"><span aria-hidden className={`size-1 rounded-full ${tier === 'Free' ? 'bg-free' : 'bg-premium'}`} />{tier}</span></div>)}
           </div>
         </div>
       </div>

@@ -40,12 +40,13 @@ const HERO_ICON_NAMES = ['agent-skill', 'mcp-server', 'palette', 'sparkle', 'cod
 
 // The icon specimen's Line spread, in this order: navigation, actions, commerce,
 // media, agent work and data, so the coverage reads as a working set rather than
-// a sampler. 28 names fill two rows on a wide screen and four on a phone.
+// a sampler. 32 names fill four rows of eight; narrower panels show the first 24 or 16.
 const SPECIMEN_ICON_NAMES = [
   'house', 'compass', 'layout-dashboard', 'layers', 'kanban', 'search', 'download',
   'share', 'trash', 'pen', 'shopping-cart', 'credit-card', 'wallet', 'tag',
   'play', 'music', 'video', 'image', 'mic', 'terminal', 'code',
   'cpu', 'brain', 'bot', 'database', 'mail', 'message-circle-text', 'chart-line-up',
+  'calendar', 'bell', 'user', 'globe',
 ]
 
 // The hero board's standalone column, in this order; the agent pulls the first.
