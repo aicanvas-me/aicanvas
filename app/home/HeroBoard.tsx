@@ -261,8 +261,8 @@ function Board({
             <Card
               href="/icons"
               id="solid"
-              title="Solid"
-              meta="Plus Duotone and Solid duotone"
+              title="Premium styles"
+              meta="Duotone, Solid, Solid duotone"
               delay={land(2, 1)}
               tags={<Tier premium />}
             >

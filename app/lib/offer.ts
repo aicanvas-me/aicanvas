@@ -38,6 +38,8 @@ export const PREMIUM_FEATURES = [
   'Remix with AI on every component',
   'Full design systems, tokens to templates',
   'All premium templates, source included',
+  'Duotone, Solid and Solid duotone icon styles',
+  'The whoosh skill: your agent makes the video',
   'New premium releases included as they ship',
   'Use in commercial and client projects',
   'Cancel anytime',

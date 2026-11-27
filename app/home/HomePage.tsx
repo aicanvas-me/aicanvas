@@ -26,6 +26,8 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
+import { IconSpecimen, type SpecimenIcon } from './IconSpecimen'
+import { HomeReel } from './HomeReel'
 import { HeroBoard, type BoardPiece, type BoardSystem, type HeroIcon } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
@@ -33,6 +35,7 @@ import { ValueBento } from './ValueBento'
 import { Wordmark } from '../components/Wordmark'
 import { StageLight } from '../components/StageLight'
 import { ProductHuntBadge } from './ProductHuntBadge'
+import { PremiumBadge } from '../components/billing/PremiumBadge'
 
 interface Props {
   /** Every standalone, free and premium. */
@@ -45,6 +48,8 @@ interface Props {
   wall: WallItem[]
   /** The hero board's Line icons (markup); empty in a build without the icon source. */
   heroIcons: HeroIcon[]
+  /** The icon section's Line spread (markup); empty in a build without the icon source. */
+  specimenIcons: SpecimenIcon[]
   /** Every icon in the set; 0 in a build without the icon source. */
   iconCount: number
   /** The hero board's standalone cards. */
@@ -83,7 +88,17 @@ const STEPS = [
   },
 ]
 
-export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, iconCount, boardPieces }: Props) {
+export function HomePage({
+  total,
+  freeTotal,
+  pulls,
+  templates,
+  wall,
+  heroIcons,
+  specimenIcons,
+  iconCount,
+  boardPieces,
+}: Props) {
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
   // design-system components and templates, which live in their own registry.
@@ -423,6 +438,28 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           </div>
         </section>
 
+        {/* ── The icon set: the Line spread over the same four icons in all
+             four styles, so what Premium adds is visible, not described ── */}
+        <section aria-labelledby="v3-icons" className="mt-20 sm:mt-32">
+          <Reveal className="mx-auto mb-10 max-w-2xl text-center">
+            <p className={EYEBROW}>The icon set</p>
+            <h2 id="v3-icons" className={`mt-2 ${H2}`}>
+              One icon family. Four ways to finish your interface.
+            </h2>
+            <p className={`mx-auto mt-3 max-w-xl ${SUB}`}>
+              {iconCount > 0 ? `${iconCount} icons` : 'Every icon'}, one file each, so you install one or the whole set.
+              Start with Line, free with no account. Duotone, Solid and Solid duotone come with Premium.
+            </p>
+          </Reveal>
+          <IconSpecimen icons={specimenIcons} />
+          <div className="mt-8 flex justify-center">
+            <Link href="/icons" prefetch={false} className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+              Explore the icons
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </section>
+
         {/* ── From catalog to code: the three-step timeline on the
              left, the agent's way in on the right; stacked on phones ── */}
         <section id="how-remix" aria-labelledby="v3-how" className="mx-auto mt-20 max-w-6xl scroll-mt-24 sm:mt-32">
@@ -492,6 +529,48 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           <ValueBento freeTotal={freeTotal} />
         </section>
 
+        {/* ── whoosh ──
+             The one place the page changes subject, so it sits after the why
+             and right above the plans: the skill is Premium, and the bridge
+             line says why a video belongs on a page about interfaces. ── */}
+        {PREMIUM && (
+          <section aria-labelledby="v3-whoosh" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+            <Reveal className="mx-auto mb-10 max-w-2xl text-center">
+              <p className="text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
+                Built it? Give it a launch.
+              </p>
+            </Reveal>
+            <div className="grid items-center gap-8 lg:grid-cols-5 lg:gap-12">
+              <Reveal className="lg:col-span-3">
+                <HomeReel />
+              </Reveal>
+              <Reveal className="lg:col-span-2">
+                <p className={`flex flex-wrap items-center gap-2 ${EYEBROW}`}>
+                  whoosh
+                  <span aria-hidden>·</span>
+                  Agent skill
+                  <PremiumBadge />
+                </p>
+                <h2 id="v3-whoosh" className={`mt-2 ${H2}`}>
+                  Describe it. Your agent makes the video.
+                </h2>
+                <p className={`mt-4 ${SUB}`}>
+                  Turn the interface you just built into a launch video, a product demo or a reel. whoosh gives Claude
+                  Code and Codex a way to make one: your prompt becomes a draft with sound you approve, then a finished
+                  mp4 at up to 4K.
+                </p>
+                <p className={`mt-3 text-sm ${SUB}`}>Renders on your own machine. Needs Node and ffmpeg.</p>
+                <div className="mt-6">
+                  <Link href="/skills/whoosh" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+                    Watch examples and install
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
+          </section>
+        )}
+
         {/* ── Pricing ──
             The same <PremiumCards /> that /pricing renders, so plans, prices,
             the billing switch and the entitlement-aware button never drift.
@@ -505,7 +584,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
               </h2>
               <p className={`mx-auto mt-3 max-w-2xl ${SUB}`}>
                 Every free component ships its full source and its remix prompt, installed with one command. Premium adds
-                Andromeda Pro, its templates, the AI Brain and the premium standalones.
+                Andromeda Pro, its templates, the AI Brain, the premium standalones, three more icon styles and the
+                whoosh skill.
               </p>
             </Reveal>
             <div className="mt-10">
