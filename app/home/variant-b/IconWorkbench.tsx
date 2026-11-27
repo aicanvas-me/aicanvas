@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import type { SpecimenIcon } from '../IconSpecimen'
+import type { SpecimenIcon } from '../variant-types'
 import { IconSvg } from '@/app/icons/_components/IconSvg'
 import { ICON_WEIGHTS } from '@/app/icons/_lib/icon-utils'
 import { StageLight } from '@/app/components/StageLight'

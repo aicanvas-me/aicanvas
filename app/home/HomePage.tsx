@@ -26,10 +26,8 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
-import type { SpecimenIcon } from './IconSpecimen'
-import * as VariantCurrent from './variant-current'
-import * as VariantA from './variant-a'
-import * as VariantB from './variant-b'
+import type { SpecimenIcon } from './variant-types'
+import { IconsSection, WhooshSection } from './variant-b'
 import { HeroBoard, type BoardPiece, type BoardSystem, type HeroIcon } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
@@ -55,8 +53,6 @@ interface Props {
   iconCount: number
   /** The hero board's standalone cards. */
   boardPieces: BoardPiece[]
-  /** Which design of the whoosh and icon sections to render; the live page passes none. */
-  variant?: 'a' | 'b'
 }
 
 const PREMIUM = premiumEnabled()
@@ -101,9 +97,7 @@ export function HomePage({
   specimenIcons,
   iconCount,
   boardPieces,
-  variant,
 }: Props) {
-  const Variant = variant === 'a' ? VariantA : variant === 'b' ? VariantB : VariantCurrent
   const variantProps = { iconCount, lineIcons: specimenIcons }
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
@@ -390,12 +384,9 @@ export function HomePage({
           <WireIcons target="v3-chapter" />
         </div>
 
-        {/* ── whoosh, then the icon set, above the Andromeda chapter. The
-             design comes from the variant this page was given: the live page
-             renders the current one, /preview/home-a and /preview/home-b the
-             two contenders. ── */}
-        {PREMIUM && <Variant.WhooshSection {...variantProps} />}
-        <Variant.IconsSection {...variantProps} />
+        {/* ── whoosh, then the icon set, above the Andromeda chapter ── */}
+        {PREMIUM && <WhooshSection {...variantProps} />}
+        <IconsSection {...variantProps} />
 
         {/* ── The Andromeda chapter: the system, its Brain, then its screens ── */}
         <div id="v3-chapter" className="mx-auto max-w-6xl scroll-mt-24">

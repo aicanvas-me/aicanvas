@@ -7,7 +7,7 @@ import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 import { icons, readLineIcons } from '../icons/_lib/server-data'
 import type { BoardPiece, HeroIcon } from './HeroBoard'
-import type { SpecimenIcon } from './IconSpecimen'
+import type { SpecimenIcon } from './variant-types'
 
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
