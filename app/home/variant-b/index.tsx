@@ -5,6 +5,7 @@ import { StageLight } from '@/app/components/StageLight'
 import { PremiumBadge } from '@/app/components/billing/PremiumBadge'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
 import { WHOOSH } from '@/app/skills/_lib/entries'
 import { FilmWall } from './FilmWall'
 import { IconWorkbench } from './IconWorkbench'
@@ -33,13 +34,13 @@ export function WhooshSection(props: VariantProps) {
             <PremiumBadge />
           </div>
           <p className={EYEBROW}>Our first agent skill. Your next launch.</p>
-          <h2 id="vb-whoosh" className={`mt-3 ${H2}`}>You built it.<br />Now make it move.</h2>
-          <p className={`mt-5 ${SUB}`}>Turn your product into a launch video, app demo or reel. whoosh teaches Claude Code and Codex to make motion graphics from your brief.</p>
-          <ol className="mt-6 space-y-3 text-sm text-sand-700 dark:text-sand-300">
-            {['Describe the video you want.', 'Review a draft with sound.', 'Approve it. Get your final mp4.'].map((step, index) => (
-              <li key={step} className="flex items-center gap-3"><span className="font-mono text-xs text-sand-600 dark:text-sand-400">0{index + 1}</span>{step}</li>
+          <h2 id="vb-whoosh" className={`mt-3 ${H2}`}>Your agent makes your video now.</h2>
+          <p className={`mt-5 ${SUB}`}>Describe the launch video, app demo or reel you want. whoosh teaches Claude Code and Codex to build it as motion graphics and hand you a finished mp4.</p>
+          <ul className="mt-6 space-y-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
+            {['Real motion blur, physics and 3D.', 'Up to 4K at 60 fps, with sound effects.', 'Your agent shows you a draft first, then renders the final.'].map(point => (
+              <li key={point} className="flex items-start gap-3"><CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />{point}</li>
             ))}
-          </ol>
+          </ul>
           <div className="mt-7"><Link href="/skills/whoosh" className={CTA}>Make your first video<ArrowRight size={16} /></Link></div>        </Reveal>
         <Reveal delay={0.08} className="min-w-0">
           <div className={`relative overflow-hidden rounded-section bg-sand-100 p-2.5 sm:p-3 dark:bg-sand-900 ${styles.filmStage}`}>
