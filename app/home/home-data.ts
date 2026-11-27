@@ -7,6 +7,7 @@ import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 import { icons, readLineIcons } from '../icons/_lib/server-data'
 import type { BoardPiece, HeroIcon } from './HeroBoard'
+import type { SpecimenIcon } from './section-types'
 
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
@@ -37,25 +38,39 @@ const WALL_SLUGS = [
 // are skipped.
 const HERO_ICON_NAMES = ['agent-skill', 'mcp-server', 'palette', 'sparkle', 'code', 'terminal']
 
+// The icon specimen's Line spread, in this order: navigation, actions, commerce,
+// media, agent work and data, so the coverage reads as a working set rather than
+// a sampler. 32 names fill four rows of eight; narrower panels show the first 24 or 16.
+const SPECIMEN_ICON_NAMES = [
+  'house', 'compass', 'layout-dashboard', 'layers', 'kanban', 'search', 'download',
+  'share', 'trash', 'pen', 'shopping-cart', 'credit-card', 'wallet', 'tag',
+  'play', 'music', 'video', 'image', 'mic', 'terminal', 'code',
+  'cpu', 'brain', 'bot', 'database', 'mail', 'message-circle-text', 'chart-line-up',
+  'calendar', 'bell', 'user', 'globe',
+]
+
 // The hero board's standalone column, in this order; the agent pulls the first.
 const BOARD_SLUGS = ['plan-runner', 'glass-ai-compose', '3d-gem-pricing-section', 'charging-widget']
 
 // A build without the icon source writes empty data (or none at all), so this
-// never throws: no markup means an empty Line card, not a broken homepage.
-async function getHeroIcons(): Promise<HeroIcon[]> {
+// never throws: no markup means an empty Line card and fallback glyphs in the
+// icon workbench, not a broken homepage. One read feeds both the hero board and the icon section.
+async function getLineIcons(): Promise<{ heroIcons: HeroIcon[]; specimenIcons: SpecimenIcon[] }> {
   try {
     const markup = await readLineIcons()
-    return HERO_ICON_NAMES.flatMap((name) =>
-      typeof markup[name] === 'string' && markup[name] ? [{ name, markup: markup[name] }] : [],
-    )
+    const pick = (names: string[]) =>
+      names.flatMap((name) =>
+        typeof markup[name] === 'string' && markup[name] ? [{ name, markup: markup[name] }] : [],
+      )
+    return { heroIcons: pick(HERO_ICON_NAMES), specimenIcons: pick(SPECIMEN_ICON_NAMES) }
   } catch {
-    return []
+    return { heroIcons: [], specimenIcons: [] }
   }
 }
 
 export async function getHomeData() {
   const total = COMPONENT_META.length
-  const [pulls, heroIcons] = await Promise.all([getRegistryPulls(), getHeroIcons()])
+  const [pulls, { heroIcons, specimenIcons }] = await Promise.all([getRegistryPulls(), getLineIcons()])
   const iconCount = Array.isArray(icons) ? icons.length : 0
   // The free MIT standalones: everything not badged Premium.
   const freeTotal = COMPONENT_META.filter((c) => c.badge !== 'Premium').length
@@ -83,5 +98,5 @@ export async function getHomeData() {
     return c ? [{ slug, name: c.name, premium: c.badge === 'Premium', kind: kind === 'Blocks' ? 'Block' : kind }] : []
   })
 
-  return { total, freeTotal, pulls, templates, wall, heroIcons, iconCount, boardPieces }
+  return { total, freeTotal, pulls, templates, wall, heroIcons, specimenIcons, iconCount, boardPieces }
 }

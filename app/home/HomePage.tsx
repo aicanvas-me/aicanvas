@@ -26,6 +26,8 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
+import type { SpecimenIcon } from './section-types'
+import { IconsSection, WhooshSection } from './launch-sections'
 import { HeroBoard, type BoardPiece, type BoardSystem, type HeroIcon } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
@@ -45,6 +47,8 @@ interface Props {
   wall: WallItem[]
   /** The hero board's Line icons (markup); empty in a build without the icon source. */
   heroIcons: HeroIcon[]
+  /** The icon section's Line spread (markup); empty in a build without the icon source. */
+  specimenIcons: SpecimenIcon[]
   /** Every icon in the set; 0 in a build without the icon source. */
   iconCount: number
   /** The hero board's standalone cards. */
@@ -83,7 +87,18 @@ const STEPS = [
   },
 ]
 
-export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, iconCount, boardPieces }: Props) {
+export function HomePage({
+  total,
+  freeTotal,
+  pulls,
+  templates,
+  wall,
+  heroIcons,
+  specimenIcons,
+  iconCount,
+  boardPieces,
+}: Props) {
+  const sectionProps = { iconCount, lineIcons: specimenIcons }
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
   // design-system components and templates, which live in their own registry.
@@ -366,8 +381,12 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
         </div>
 
         <div className="mx-auto max-w-4xl">
-          <WireIcons target="v3-chapter" />
+          <WireIcons target={PREMIUM ? 'home-whoosh-section' : 'home-icons-section'} />
         </div>
+
+        {/* ── whoosh, then the icon set, above the Andromeda chapter ── */}
+        {PREMIUM && <WhooshSection />}
+        <IconsSection {...sectionProps} />
 
         {/* ── The Andromeda chapter: the system, its Brain, then its screens ── */}
         <div id="v3-chapter" className="mx-auto max-w-6xl scroll-mt-24">
@@ -505,7 +524,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
               </h2>
               <p className={`mx-auto mt-3 max-w-2xl ${SUB}`}>
                 Every free component ships its full source and its remix prompt, installed with one command. Premium adds
-                Andromeda Pro, its templates, the AI Brain and the premium standalones.
+                Andromeda Pro, its templates, the AI Brain, the premium standalones, three more icon styles and the
+                whoosh skill.
               </p>
             </Reveal>
             <div className="mt-10">

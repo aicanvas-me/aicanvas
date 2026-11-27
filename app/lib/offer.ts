@@ -35,9 +35,10 @@ export const usd = (n: number) => `$${n.toFixed(2)}`
 
 export const PREMIUM_FEATURES = [
   'Every premium component and block, one command install',
-  'Remix with AI on every component',
   'Full design systems, tokens to templates',
   'All premium templates, source included',
+  'Every icon in all four styles',
+  'All agent skills, including whoosh',
   'New premium releases included as they ship',
   'Use in commercial and client projects',
   'Cancel anytime',
