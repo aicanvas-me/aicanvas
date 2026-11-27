@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { X } from '@/app/_icons/icons/x'
 import { isChromeless } from './TopBar'
 
 // Collapses its child when the page scrolls down and brings it back on the way
@@ -10,9 +11,11 @@ import { isChromeless } from './TopBar'
 const PAGE_SCROLLER = '[data-owns-scroll], .app-scroll-column'
 const MIN_OVERFLOW = 160
 
-export function RibbonReveal({ children }: { children: ReactNode }) {
+// With closeCookie it also draws an X that hides the ribbon and sets that cookie for a week.
+export function RibbonReveal({ children, closeCookie }: { children: ReactNode; closeCookie?: string }) {
   const pathname = usePathname() ?? '/'
   const [shown, setShown] = useState(true)
+  const [closed, setClosed] = useState(false)
   const last = useRef(new WeakMap<Element, number>())
   const lockedUntil = useRef(0)
   const shownRef = useRef(true)
@@ -50,12 +53,29 @@ export function RibbonReveal({ children }: { children: ReactNode }) {
 
   if (isChromeless(pathname)) return null
 
+  // Closing collapses it with the same motion as scrolling, and it stays collapsed.
+  const close = () => {
+    document.cookie = `${closeCookie}=1; path=/; max-age=604800; samesite=lax`
+    setClosed(true)
+  }
+  const open = shown && !closed
+
   return (
     <div
-      className={`grid shrink-0 transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none ${shown ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      className={`grid shrink-0 transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
     >
-      <div className="overflow-hidden" inert={!shown}>
+      <div className="relative overflow-hidden" inert={!open}>
         {children}
+        {closeCookie && (
+          <button
+            type="button"
+            aria-label="Close the offer"
+            onClick={close}
+            className="absolute right-2 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-full text-accent-foreground/70 transition-colors hover:bg-accent-foreground/10 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-foreground"
+          >
+            <X size={14} aria-hidden />
+          </button>
+        )}
       </div>
     </div>
   )
