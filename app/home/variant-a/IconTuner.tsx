@@ -27,10 +27,7 @@ const MAX = 40
 // The film's moves as [ms from start, change]; each step is one state write.
 type Step = [number, { size?: number; weight?: number; colour?: number }]
 const DEMO: Step[] = [
-  [500, { size: 22 }],
-  [700, { size: 26 }],
-  [900, { size: 30 }],
-  [1100, { size: 34 }],
+  [500, { size: 34 }],
   [1600, { weight: 1 }],
   [1800, { weight: 0 }],
   [2400, { weight: 2 }],
@@ -50,7 +47,7 @@ const RANGE =
   'mt-3 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-sand-300 accent-sand-900 dark:bg-sand-700 dark:accent-sand-50'
 
 export function IconTuner({ icons }: { icons: SpecimenIcon[] }) {
-  const [size, setSize] = useState(24)
+  const [size, setSize] = useState(20)
   const [weight, setWeight] = useState(2)
   const [colour, setColour] = useState(0)
   const root = useRef<HTMLDivElement>(null)
@@ -127,7 +124,7 @@ export function IconTuner({ icons }: { icons: SpecimenIcon[] }) {
       <div
         ref={grid}
         aria-hidden
-        className="grid grid-cols-6 text-sand-900 md:pr-7 dark:text-sand-50"
+        className="grid grid-cols-6 text-sand-900 md:pr-7 dark:text-sand-50 [&_svg]:transition-[width,height,stroke-width] [&_svg]:duration-300 [&_svg]:ease-out motion-reduce:[&_svg]:transition-none"
         style={{
           color:
             COLOURS[colour].value === 'currentColor'
@@ -140,7 +137,7 @@ export function IconTuner({ icons }: { icons: SpecimenIcon[] }) {
             key={name}
             className="flex aspect-square items-center justify-center"
           >
-            <IconSvg markup={markup} size={size} weight={weightEntry.id} />
+            <IconSvg markup={markup} size={`${size}px`} weight={weightEntry.id} />
           </span>
         ))}
       </div>

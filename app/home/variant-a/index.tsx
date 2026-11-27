@@ -113,7 +113,7 @@ export const WhooshSection: (props: VariantProps) => ReactElement = () => (
               <ArrowRight size={14} />
             </Link>
             <Link
-              href="/skills/whoosh"
+              href="/skills/whoosh#skills-films"
               className={buttonClasses({ variant: 'outline', size: 'lg' })}
             >
               Watch all {TILE_FILMS.length} films
@@ -133,7 +133,7 @@ export const WhooshSection: (props: VariantProps) => ReactElement = () => (
                 <span className="shrink-0 font-mono text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   Prompt
                 </span>
-                <span className="truncate font-mono text-[13px] text-sand-900 dark:text-sand-50">
+                <span className="font-mono text-[13px] text-sand-900 sm:truncate dark:text-sand-50">
                   {WHOOSH.tryPrompt}
                 </span>
               </div>
@@ -197,7 +197,7 @@ export function IconsSection({ iconCount, lineIcons }: VariantProps) {
           </div>
         </Reveal>
 
-        <Reveal className="lg:col-span-5 lg:order-last" delay={0.08}>
+        <Reveal className="lg:col-span-5" delay={0.08}>
           <p className={EYEBROW}>The icon set</p>
           <h2 id="va-icons" className={`mt-3 ${H2} sm:text-5xl`}>
             Icons you tune, not just pick.
