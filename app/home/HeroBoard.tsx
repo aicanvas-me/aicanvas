@@ -260,7 +260,7 @@ function Board({
             </Card>
             <Card
               href="/icons"
-              id="solid"
+              id="styles"
               title="Premium styles"
               meta="Duotone, Solid, Solid duotone"
               delay={land(2, 1)}

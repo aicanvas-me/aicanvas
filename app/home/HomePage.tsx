@@ -26,8 +26,8 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
-import type { SpecimenIcon } from './variant-types'
-import { IconsSection, WhooshSection } from './variant-b'
+import type { SpecimenIcon } from './section-types'
+import { IconsSection, WhooshSection } from './launch-sections'
 import { HeroBoard, type BoardPiece, type BoardSystem, type HeroIcon } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
@@ -98,7 +98,7 @@ export function HomePage({
   iconCount,
   boardPieces,
 }: Props) {
-  const variantProps = { iconCount, lineIcons: specimenIcons }
+  const sectionProps = { iconCount, lineIcons: specimenIcons }
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
   // design-system components and templates, which live in their own registry.
@@ -385,8 +385,8 @@ export function HomePage({
         </div>
 
         {/* ── whoosh, then the icon set, above the Andromeda chapter ── */}
-        {PREMIUM && <WhooshSection {...variantProps} />}
-        <IconsSection {...variantProps} />
+        {PREMIUM && <WhooshSection />}
+        <IconsSection {...sectionProps} />
 
         {/* ── The Andromeda chapter: the system, its Brain, then its screens ── */}
         <div id="v3-chapter" className="mx-auto max-w-6xl scroll-mt-24">

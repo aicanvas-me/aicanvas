@@ -5,8 +5,8 @@ import Link from 'next/link'
 // internal nav first (sitewide internal-linking helps SEO), then the legal
 // links (Impressum and "Verträge hier kündigen" must be easily and directly
 // available per § 5 DDG / § 312k BGB), then external (the shadcn registry
-// directory and the @aicanvas/mcp npm package). Text only by design — no logo
-// or images. External links open in a new tab.
+// directory and the @aicanvas/mcp npm package). Text only by design, no logo or
+// images; the flag dots are CSS. External links open in a new tab.
 
 const linkCls = 'transition-colors hover:text-sand-700 dark:hover:text-sand-200'
 
@@ -21,11 +21,11 @@ export function SiteFooter() {
           <span className="size-2.5 rounded-full bg-[#FFCE00]" />
         </span>
         <span>
-          © 2026 AI Canvas. Designed and built in{' '}
+          © 2026 AI Canvas, the design layer for AI coding agents. Designed and built in{' '}
           <Link href="/impressum" className={`underline decoration-sand-300 underline-offset-2 dark:decoration-sand-700 ${linkCls}`}>
             Germany
           </Link>
-          , the design layer for AI coding agents.
+          .
         </span>
       </p>
       <nav

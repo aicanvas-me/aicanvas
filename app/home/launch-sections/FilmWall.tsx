@@ -5,7 +5,7 @@ import { TILE_FILMS } from '@/app/skills/_lib/media'
 import { Play } from '@/app/_icons/icons/play'
 import { Pause } from '@/app/_icons/icons/pause'
 import { buttonClasses } from '@/app/components/buttonClasses'
-import styles from './variant.module.css'
+import styles from './sections.module.css'
 
 const FILMS = ['product-launch', 'app-demo', 'mobile-app-ad'].map(id => TILE_FILMS.find(film => film.id === id)!)
 
@@ -37,12 +37,21 @@ function Film({ film, className }: { film: typeof TILE_FILMS[number]; className:
     }
   }, [requested])
 
+  // Play inside the tap itself: Safari in Low Power Mode refuses a play() started later.
+  const toggle = () => {
+    const video = ref.current
+    if (!video) return
+    if (playing) video.pause()
+    else void video.play().catch(() => {})
+    setRequested(!playing)
+  }
+
   return (
     <div className={`relative min-h-0 overflow-hidden rounded-card bg-sand-950 ${className}`}>
       <video ref={ref} src={film.src} poster={film.poster} muted loop playsInline preload="none" aria-label={`${film.label} made with whoosh`} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} className="absolute inset-0 h-full w-full object-cover" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-sand-950/90 to-transparent" />
       <span className="pointer-events-none absolute bottom-3 left-3 max-w-[calc(100%-3.5rem)] text-[11px] font-semibold text-sand-50 sm:text-xs">{film.label}</span>
-      <button type="button" aria-label={`${playing ? 'Pause' : 'Play'} ${film.label}`} onClick={() => setRequested(!playing)} className={`${buttonClasses({ variant: 'icon', size: 'sm' })} ${styles.filmControl} absolute right-1.5 bottom-1.5`}>
+      <button type="button" aria-label={`${playing ? 'Pause' : 'Play'} ${film.label}`} onClick={toggle} className={`${buttonClasses({ variant: 'icon', size: 'sm' })} ${styles.filmControl} absolute right-1.5 bottom-1.5 motion-reduce:active:scale-100`}>
         {playing ? <Pause size={14} /> : <Play size={14} />}
       </button>
     </div>

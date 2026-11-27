@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { VariantProps } from '../variant-types'
+import type { SectionProps } from '../section-types'
 import { Reveal } from '../Reveal'
 import { StageLight } from '@/app/components/StageLight'
 import { PremiumBadge } from '@/app/components/billing/PremiumBadge'
@@ -7,9 +7,10 @@ import { buttonClasses } from '@/app/components/buttonClasses'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { CircleCheck } from '@/app/_icons/icons/circle-check'
 import { WHOOSH } from '@/app/skills/_lib/entries'
+import { ICON_CATEGORIES } from '@/app/icons/_lib/categories'
 import { FilmWall } from './FilmWall'
 import { IconWorkbench } from './IconWorkbench'
-import styles from './variant.module.css'
+import styles from './sections.module.css'
 
 const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 const H2 = 'text-balance text-3xl font-bold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50'
@@ -20,11 +21,9 @@ function NewMark() {
   return <span className="inline-flex items-center gap-1.5 text-xs font-semibold normal-case tracking-normal text-sand-900 dark:text-sand-50"><span aria-hidden className="size-1.5 rounded-full bg-new" />New</span>
 }
 
-export function WhooshSection(props: VariantProps) {
-  // This section shares the homepage contract but needs no icon data.
-  void props
+export function WhooshSection() {
   return (
-    <section id="vb-whoosh-section" aria-labelledby="vb-whoosh" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+    <section id="home-whoosh-section" aria-labelledby="home-whoosh" className="mx-auto mt-20 max-w-6xl sm:mt-32">
       <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.25fr] lg:gap-12">
         <Reveal>
           <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -34,21 +33,24 @@ export function WhooshSection(props: VariantProps) {
             <PremiumBadge />
           </div>
           <p className={EYEBROW}>Our first agent skill. Your next launch.</p>
-          <h2 id="vb-whoosh" className={`mt-3 ${H2}`}>Your agent makes your video now.</h2>
+          <h2 id="home-whoosh" className={`mt-3 ${H2}`}>Your agent makes your video now.</h2>
           <p className={`mt-5 ${SUB}`}>Describe the launch video, app demo or reel you want. whoosh teaches Claude Code and Codex to build it as motion graphics and hand you a finished mp4.</p>
           <ul className="mt-6 space-y-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
             {['Real motion blur, physics and 3D.', 'Up to 4K at 60 fps, with sound effects.', 'Your agent shows you a draft first, then renders the final.'].map(point => (
               <li key={point} className="flex items-start gap-3"><CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />{point}</li>
             ))}
           </ul>
-          <div className="mt-7"><Link href="/skills/whoosh" className={CTA}>Make your first video<ArrowRight size={16} /></Link></div>        </Reveal>
+          <div className="mt-7"><Link href="/skills/whoosh" className={CTA}>Make your first video<ArrowRight size={16} /></Link></div>
+        </Reveal>
         <Reveal delay={0.08} className="min-w-0">
           <div className={`relative overflow-hidden rounded-section bg-sand-100 p-2.5 sm:p-3 dark:bg-sand-900 ${styles.filmStage}`}>
             <StageLight />
             <div className="relative">
               <div className="px-3 pb-4 pt-3 sm:px-4">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Start with a sentence</p>
-                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>              </div>              <FilmWall />
+                <blockquote className="mt-2 text-sm leading-relaxed text-sand-900 sm:text-base dark:text-sand-50">“{WHOOSH.tryPrompt}”</blockquote>
+              </div>
+              <FilmWall />
               <div className="flex flex-wrap justify-between gap-2 px-2 pb-1 pt-3 text-[11px] text-sand-600 dark:text-sand-400"><span>57 motion recipes</span><span>3D + physics</span><span>Up to 4K · 60 fps</span></div>
             </div>
           </div>
@@ -58,22 +60,23 @@ export function WhooshSection(props: VariantProps) {
   )
 }
 
-export function IconsSection(props: VariantProps) {
+export function IconsSection(props: SectionProps) {
   return (
-    <section id="vb-icons-section" aria-labelledby="vb-icons" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+    <section id="home-icons-section" aria-labelledby="home-icons" className="mx-auto mt-20 max-w-6xl sm:mt-32">
       <div className="grid items-center gap-10 lg:grid-cols-[1.25fr_0.85fr] lg:gap-12">
         <Reveal className="min-w-0" delay={0.04}>
           <IconWorkbench icons={props.lineIcons} />
         </Reveal>
         <Reveal>
           <div className={`flex items-center gap-3 ${EYEBROW}`}><span>The AI Canvas icon set</span><NewMark /></div>
-          <h2 id="vb-icons" className={`mt-3 ${H2}`}>Small details.<br />Entirely your style.</h2>
-          <p className={`mt-5 ${SUB}`}>{props.iconCount > 0 ? `${props.iconCount.toLocaleString('en-US')} icons. ` : 'A complete icon family. '}25 categories. One precise 24 px grid. Tune the size, weight and colour until every icon feels at home in your interface.</p>
+          <h2 id="home-icons" className={`mt-3 ${H2}`}>Small details.<br />Entirely your style.</h2>
+          <p className={`mt-5 ${SUB}`}>{props.iconCount > 0 ? `${props.iconCount.toLocaleString('en-US')} icons. ` : 'A complete icon family. '}{ICON_CATEGORIES.length} categories. One precise 24 px grid. Tune the size, weight and colour until every icon feels at home in your interface.</p>
           <div className="mt-6 space-y-4 text-sm">
             <p className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-free" /><span><strong className="font-semibold text-sand-900 dark:text-sand-50">Start with Line. It’s free.</strong><br />Every icon, five weights, any size and colour.</span></p>
             <div className="flex items-start gap-3 text-sand-700 dark:text-sand-300"><span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-premium" /><div><p className="flex flex-wrap items-center gap-2 font-semibold text-sand-900 dark:text-sand-50">Go further with four styles.<PremiumBadge /></p><p>Line, Duotone, Solid and Solid duotone.</p></div></div>
           </div>
-          <div className="mt-7"><Link href="/icons" className={CTA}>Find your icons<ArrowRight size={16} /></Link></div>        </Reveal>
+          <div className="mt-7"><Link href="/icons" className={CTA}>Find your icons<ArrowRight size={16} /></Link></div>
+        </Reveal>
       </div>
     </section>
   )

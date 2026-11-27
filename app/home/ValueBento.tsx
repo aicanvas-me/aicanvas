@@ -321,11 +321,11 @@ function LicenceFile() {
 function Included() {
   const rows: { icon: ReactNode; name: string; note: string }[] = [
     { icon: <Grid2x2 size={15} />, name: 'Andromeda Pro', note: 'the full design system' },
-    { icon: <Browser size={15} />, name: 'Pro templates', note: 'whole apps, ready to edit' },
-    { icon: <Brain size={15} />, name: 'The AI Brain', note: 'the system, for your agent' },
-    { icon: <Box size={15} />, name: 'Premium standalones', note: 'every premium piece' },
-    { icon: <Shapes size={15} />, name: 'Icon styles', note: 'Duotone, Solid, Solid duotone' },
     { icon: <Clapperboard size={15} />, name: 'whoosh', note: 'your agent makes the video' },
+    { icon: <Shapes size={15} />, name: 'Icon styles', note: 'every icon, all four styles' },
+    { icon: <Brain size={15} />, name: 'The AI Brain', note: 'the system, for your agent' },
+    { icon: <Browser size={15} />, name: 'Pro templates', note: 'whole apps, ready to edit' },
+    { icon: <Box size={15} />, name: 'Premium standalones', note: 'every premium piece' },
     { icon: <Sparkle size={15} />, name: 'New releases', note: 'included as they ship' },
   ]
   return (

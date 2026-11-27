@@ -148,8 +148,8 @@ export default function SkillsPage() {
                   >
                     {FEATURED.name}<span aria-hidden className="text-new">.</span>
                   </h2>
-                  {/* Bottom on the baseline, top at the x-height of the name. */}
-                  <span aria-hidden className="h-6 w-px bg-sand-200 sm:h-10 dark:bg-sand-800" />
+                  {/* Baseline to x-height; phones drop it, as the chips wrap below the name there. */}
+                  <span aria-hidden className="hidden h-10 w-px bg-sand-200 sm:block dark:bg-sand-800" />
                   <span className="inline-flex flex-wrap items-center gap-2">
                     <KindPill kind={FEATURED.kind} />
                     <PremiumBadge className="py-1 text-xs" />

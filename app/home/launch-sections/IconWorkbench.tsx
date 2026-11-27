@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import type { SpecimenIcon } from '../variant-types'
+import type { SpecimenIcon } from '../section-types'
 import { IconSvg } from '@/app/icons/_components/IconSvg'
 import { ICON_WEIGHTS } from '@/app/icons/_lib/icon-utils'
 import { StageLight } from '@/app/components/StageLight'
@@ -10,10 +10,10 @@ import { Heart } from '@/app/_icons/icons/heart'
 import { Bell } from '@/app/_icons/icons/bell'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { Star } from '@/app/_icons/icons/star'
-import styles from './variant.module.css'
+import styles from './sections.module.css'
 
 const COLOURS = [
-  { label: 'Neutral', value: 'currentColor', swatch: 'var(--vb-neutral)' },
+  { label: 'Neutral', value: 'currentColor', swatch: 'var(--home-neutral)' },
   { label: 'Cyan', value: 'var(--premium)', swatch: 'var(--premium)' },
   { label: 'Orange', value: 'var(--free)', swatch: 'var(--free)' },
   { label: 'Purple', value: 'var(--new)', swatch: 'var(--new)' },
@@ -21,6 +21,8 @@ const COLOURS = [
 ]
 const FALLBACKS = [Heart, Bolt, Star, Bell]
 const CELLS = 32
+// Where the one-time demo comes to rest: 48 px, Regular, green.
+const DEMO_END = { size: 48, weightIndex: 2, colourIndex: 4 }
 // A cell's place in the colour wave for each column count the grid can take.
 const wave = (index: number, columns: number) => `${((index % columns) + Math.floor(index / columns)) * 30}ms`
 
@@ -43,10 +45,16 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
       cancelAnimationFrame(frame)
     }
     stopDemo.current = stop
+    // A demo cut short by scrolling away or a hidden tab lands on its last frame, not mid-move.
+    const finish = () => {
+      if (!started || stopped) return
+      stop()
+      setTuning(DEMO_END)
+    }
 
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting || entry.intersectionRatio < 0.5) {
-        if (started) stop()
+        finish()
         return
       }
       if (started || stopped || document.hidden) return
@@ -69,8 +77,8 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
       frame = requestAnimationFrame(tick)
     }, { threshold: [0, 0.5] })
     observer.observe(element)
-    const onPreference = () => { if (reduced.matches) stop() }
-    const onVisibility = () => { if (document.hidden && started) stop() }
+    const onPreference = () => { if (reduced.matches) finish() }
+    const onVisibility = () => { if (document.hidden) finish() }
     reduced.addEventListener('change', onPreference)
     document.addEventListener('visibilitychange', onVisibility)
     return () => {
@@ -98,7 +106,7 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
                 const Fallback = FALLBACKS[index % FALLBACKS.length]
                 return (
                   <span key={icon.name} className={styles.iconCell}>
-                    <span key={colourIndex} className={colourIndex ? styles.colourPop : ''} style={{ '--vb-delay-8': wave(index, 8), '--vb-delay-6': wave(index, 6), '--vb-delay-4': wave(index, 4) } as CSSProperties}>
+                    <span key={colourIndex} className={colourIndex ? styles.colourPop : ''} style={{ '--home-delay-8': wave(index, 8), '--home-delay-6': wave(index, 6), '--home-delay-4': wave(index, 4) } as CSSProperties}>
                       {icon.markup ? <IconSvg markup={icon.markup} size={size} weight={weight.id} colour={colour.value} /> : <Fallback size={size} weight={weight.id} color={colour.value} />}
                     </span>
                   </span>
@@ -107,16 +115,16 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
             </div>
             <div onPointerDownCapture={takeControl} onFocusCapture={takeControl} onKeyDownCapture={takeControl} className={`${styles.controls} border-sand-200 dark:border-sand-800`}>
               <div>
-                <label htmlFor="vb-icon-size" className="flex justify-between gap-2 text-xs font-semibold">Size<output aria-live="off" className="font-mono font-normal text-sand-600 dark:text-sand-400">{size}px</output></label>
-                <input id="vb-icon-size" type="range" min="24" max="48" step="1" value={size} onChange={event => { takeControl(); setTuning(current => ({ ...current, size: Number(event.target.value) })) }} className={styles.range} />
+                <label htmlFor="home-icon-size" className="flex justify-between gap-2 text-xs font-semibold">Size<output aria-live="off" className="font-mono font-normal text-sand-600 dark:text-sand-400">{size}px</output></label>
+                <input id="home-icon-size" type="range" min="24" max="48" step="1" value={size} onChange={event => { takeControl(); setTuning(current => ({ ...current, size: Number(event.target.value) })) }} className={styles.range} />
               </div>
               <div>
-                <label htmlFor="vb-icon-weight" className="flex flex-wrap justify-between gap-1 text-xs font-semibold">Weight<output aria-live="off" className="font-normal text-sand-600 dark:text-sand-400">{weight.label}</output></label>
-                <input id="vb-icon-weight" type="range" min="0" max="4" step="1" value={weightIndex} aria-valuetext={weight.label} onChange={event => { takeControl(); setTuning(current => ({ ...current, weightIndex: Number(event.target.value) })) }} className={styles.range} />
+                <label htmlFor="home-icon-weight" className="flex flex-wrap justify-between gap-1 text-xs font-semibold">Weight<output aria-live="off" className="font-normal text-sand-600 dark:text-sand-400">{weight.label}</output></label>
+                <input id="home-icon-weight" type="range" min="0" max="4" step="1" value={weightIndex} aria-valuetext={weight.label} onChange={event => { takeControl(); setTuning(current => ({ ...current, weightIndex: Number(event.target.value) })) }} className={styles.range} />
                 <div className="flex justify-between gap-2 text-[11px] text-sand-600 dark:text-sand-400"><span>Thin</span><span>Extra Bold</span></div>
               </div>
               <fieldset className="min-w-0"><legend className="mb-2 text-xs font-semibold">Colour</legend><div className="flex flex-wrap gap-1">
-                {COLOURS.map((item, index) => <button key={item.label} type="button" aria-label={`${item.label} icons`} aria-pressed={colourIndex === index} onClick={() => { takeControl(); setTuning(current => ({ ...current, colourIndex: index })) }} className={`${buttonClasses({ variant: 'icon', size: 'xs' })} ${styles.swatch} ${colourIndex === index ? styles.selectedSwatch : ''}`}><span style={{ background: item.swatch }} /></button>)}
+                {COLOURS.map((item, index) => <button key={item.label} type="button" aria-label={`${item.label} icons`} aria-pressed={colourIndex === index} onClick={() => { takeControl(); setTuning(current => ({ ...current, colourIndex: index })) }} className={`${buttonClasses({ variant: 'icon', size: 'xs' })} ${styles.swatch} ${colourIndex === index ? styles.selectedSwatch : ''} motion-reduce:active:scale-100`}><span style={{ background: item.swatch }} /></button>)}
               </div></fieldset>
             </div>
           </div>
