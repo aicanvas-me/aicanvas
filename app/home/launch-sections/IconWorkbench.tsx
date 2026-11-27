@@ -116,11 +116,11 @@ export function IconWorkbench({ icons }: { icons: SpecimenIcon[] }) {
             <div onPointerDownCapture={takeControl} onFocusCapture={takeControl} onKeyDownCapture={takeControl} className={`${styles.controls} border-sand-200 dark:border-sand-800`}>
               <div>
                 <label htmlFor="home-icon-size" className="flex justify-between gap-2 text-xs font-semibold">Size<output aria-live="off" className="font-mono font-normal text-sand-600 dark:text-sand-400">{size}px</output></label>
-                <input id="home-icon-size" type="range" min="24" max="48" step="1" value={size} onChange={event => { takeControl(); setTuning(current => ({ ...current, size: Number(event.target.value) })) }} className={styles.range} />
+                <input id="home-icon-size" aria-label="Size" type="range" min="24" max="48" step="1" value={size} onChange={event => { takeControl(); setTuning(current => ({ ...current, size: Number(event.target.value) })) }} className={styles.range} />
               </div>
               <div>
                 <label htmlFor="home-icon-weight" className="flex flex-wrap justify-between gap-1 text-xs font-semibold">Weight<output aria-live="off" className="font-normal text-sand-600 dark:text-sand-400">{weight.label}</output></label>
-                <input id="home-icon-weight" type="range" min="0" max="4" step="1" value={weightIndex} aria-valuetext={weight.label} onChange={event => { takeControl(); setTuning(current => ({ ...current, weightIndex: Number(event.target.value) })) }} className={styles.range} />
+                <input id="home-icon-weight" aria-label="Weight" type="range" min="0" max="4" step="1" value={weightIndex} aria-valuetext={weight.label} onChange={event => { takeControl(); setTuning(current => ({ ...current, weightIndex: Number(event.target.value) })) }} className={styles.range} />
                 <div className="flex justify-between gap-2 text-[11px] text-sand-600 dark:text-sand-400"><span>Thin</span><span>Extra Bold</span></div>
               </div>
               <fieldset className="min-w-0"><legend className="mb-2 text-xs font-semibold">Colour</legend><div className="flex flex-wrap gap-1">

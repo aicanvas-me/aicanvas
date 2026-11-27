@@ -1,6 +1,6 @@
 export type SpecimenIcon = { name: string; markup: string }
 
-// What the homepage hands the whoosh and icon sections.
+// What the homepage hands the icon section.
 export type SectionProps = {
   /** Every icon in the set; 0 in a build without the icon source. */
   iconCount: number

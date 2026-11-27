@@ -381,7 +381,7 @@ export function HomePage({
         </div>
 
         <div className="mx-auto max-w-4xl">
-          <WireIcons target="v3-chapter" />
+          <WireIcons target={PREMIUM ? 'home-whoosh-section' : 'home-icons-section'} />
         </div>
 
         {/* ── whoosh, then the icon set, above the Andromeda chapter ── */}

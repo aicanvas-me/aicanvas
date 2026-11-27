@@ -14,7 +14,8 @@ const FILMS = ['product-launch', 'app-demo', 'mobile-app-ad'].map(id => TILE_FIL
 function Film({ film, className }: { film: typeof TILE_FILMS[number]; className: string }) {
   const ref = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
-  const [requested, setRequested] = useState<boolean | null>(null)
+  // The visitor's choice, kept out of state so a tap never re-runs the effect and pauses its own play().
+  const requested = useRef<boolean | null>(null)
 
   useEffect(() => {
     const video = ref.current
@@ -22,7 +23,7 @@ function Film({ film, className }: { film: typeof TILE_FILMS[number]; className:
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
     let visible = false
     const sync = () => {
-      if (visible && !document.hidden && (requested ?? !reduced.matches)) void video.play().catch(() => {})
+      if (visible && !document.hidden && (requested.current ?? !reduced.matches)) void video.play().catch(() => {})
       else video.pause()
     }
     const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync() }, { threshold: 0.15 })
@@ -35,15 +36,15 @@ function Film({ film, className }: { film: typeof TILE_FILMS[number]; className:
       document.removeEventListener('visibilitychange', sync)
       video.pause()
     }
-  }, [requested])
+  }, [])
 
   // Play inside the tap itself: Safari in Low Power Mode refuses a play() started later.
   const toggle = () => {
     const video = ref.current
     if (!video) return
+    requested.current = !playing
     if (playing) video.pause()
     else void video.play().catch(() => {})
-    setRequested(!playing)
   }
 
   return (

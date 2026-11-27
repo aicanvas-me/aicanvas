@@ -1,6 +1,8 @@
 .filmStage { box-shadow: 0 24px 60px -32px color-mix(in srgb, var(--color-sand-950) 45%, transparent); }
 .filmControl { color: var(--color-sand-50); background: color-mix(in srgb, var(--color-sand-950) 70%, transparent); }
 .filmControl:hover { color: var(--color-sand-50); background: var(--color-sand-800); }
+/* Light ink on the dark scrim in both themes; the shared accent ring would vanish here. */
+.filmControl:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-sand-50) 60%, transparent); }
 .workbenchContainer { container-type: inline-size; perspective: 1400px; }
 .workbench {
   --home-neutral: var(--color-sand-900);

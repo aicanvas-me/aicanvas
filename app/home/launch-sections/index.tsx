@@ -23,7 +23,7 @@ function NewMark() {
 
 export function WhooshSection() {
   return (
-    <section id="home-whoosh-section" aria-labelledby="home-whoosh" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+    <section id="home-whoosh-section" aria-labelledby="home-whoosh" className="mx-auto mt-20 max-w-6xl scroll-mt-24 sm:mt-32">
       <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.25fr] lg:gap-12">
         <Reveal>
           <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -62,7 +62,7 @@ export function WhooshSection() {
 
 export function IconsSection(props: SectionProps) {
   return (
-    <section id="home-icons-section" aria-labelledby="home-icons" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+    <section id="home-icons-section" aria-labelledby="home-icons" className="mx-auto mt-20 max-w-6xl scroll-mt-24 sm:mt-32">
       <div className="grid items-center gap-10 lg:grid-cols-[1.25fr_0.85fr] lg:gap-12">
         <Reveal className="min-w-0" delay={0.04}>
           <IconWorkbench icons={props.lineIcons} />

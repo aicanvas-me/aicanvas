@@ -53,8 +53,8 @@ const SPECIMEN_ICON_NAMES = [
 const BOARD_SLUGS = ['plan-runner', 'glass-ai-compose', '3d-gem-pricing-section', 'charging-widget']
 
 // A build without the icon source writes empty data (or none at all), so this
-// never throws: no markup means an empty Line card and no specimen spread, not a
-// broken homepage. One read feeds both the hero board and the icon section.
+// never throws: no markup means an empty Line card and fallback glyphs in the
+// icon workbench, not a broken homepage. One read feeds both the hero board and the icon section.
 async function getLineIcons(): Promise<{ heroIcons: HeroIcon[]; specimenIcons: SpecimenIcon[] }> {
   try {
     const markup = await readLineIcons()
